@@ -31,9 +31,17 @@ public class AssetEntity {
     @NotEmpty(message = "Amount is empty.")
     private BigDecimal amount;
 
+    @NotNull(message = "Income date is null.")
+    @NotEmpty(message = "Income date is empty.")
     private Instant incomeDate;
 
     private AssetCategory category;
+
+    public AssetEntity(BigDecimal amount, Instant incomeDate, AssetCategory category) {
+        this.amount = amount;
+        this.incomeDate = incomeDate;
+        this.category = category;
+    }
 
     @Override
     public boolean equals(Object o) {
