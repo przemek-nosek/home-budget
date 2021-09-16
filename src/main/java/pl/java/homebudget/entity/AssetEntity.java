@@ -7,7 +7,6 @@ import lombok.ToString;
 import pl.java.homebudget.enums.AssetCategory;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Instant;

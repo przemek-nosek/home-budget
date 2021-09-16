@@ -1,7 +1,6 @@
 package pl.java.homebudget.dto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pl.java.homebudget.enums.AssetCategory;
