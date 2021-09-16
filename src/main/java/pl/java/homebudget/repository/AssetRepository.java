@@ -6,4 +6,5 @@ import pl.java.homebudget.entity.AssetEntity;
 
 @Repository
 public interface AssetRepository extends JpaRepository<AssetEntity, Long> {
+
 }

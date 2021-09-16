@@ -3,9 +3,7 @@ package pl.java.homebudget.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.service.AssetService;
 
@@ -23,5 +21,26 @@ public class AssetController {
         List<AssetDto> assets = assetService.getAssets();
 
         return new ResponseEntity<>(assets, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<AssetDto> addAsset(@RequestBody AssetDto assetDto) {
+        AssetDto addedAsset = assetService.addAsset(assetDto);
+
+        return new ResponseEntity<>(addedAsset, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<AssetDto> deleteAsset(@RequestBody AssetDto assetDto) {
+        assetService.deleteAsset(assetDto);
+
+        return new ResponseEntity<>(assetDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAssetById(@PathVariable("id") Long id) {
+        assetService.deleteAssetById(id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

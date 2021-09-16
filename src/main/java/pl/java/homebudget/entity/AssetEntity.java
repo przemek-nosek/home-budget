@@ -6,10 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import pl.java.homebudget.enums.AssetCategory;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -24,15 +21,14 @@ import java.util.Objects;
 @ToString
 public class AssetEntity {
     @Id
+    @GeneratedValue
     @Column(updatable = false, nullable = false)
     private Long id;
 
     @NotNull(message = "Amount is null.")
-    @NotEmpty(message = "Amount is empty.")
     private BigDecimal amount;
 
     @NotNull(message = "Income date is null.")
-    @NotEmpty(message = "Income date is empty.")
     private Instant incomeDate;
 
     private AssetCategory category;
