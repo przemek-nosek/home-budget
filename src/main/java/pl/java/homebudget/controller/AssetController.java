@@ -43,4 +43,11 @@ public class AssetController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping
+    public ResponseEntity<AssetDto> updateAsset(@RequestBody AssetDto assetDto) {
+        AssetDto updatedAsset = assetService.updateAsset(assetDto);
+
+        return new ResponseEntity<>(updatedAsset, HttpStatus.OK);
+    }
 }
