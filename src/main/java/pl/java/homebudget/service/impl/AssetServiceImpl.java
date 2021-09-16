@@ -12,6 +12,7 @@ import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.AssetService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +21,6 @@ public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
     private final AssetMapper assetMapper = Mappers.getMapper(AssetMapper.class);
-
 
     @Override
     public List<AssetDto> getAssets() {
@@ -57,13 +57,23 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public AssetDto updateAsset(AssetDto assetDto) { // TODO: VALID FIELDS AND UPDATE
+    public AssetDto updateAsset(AssetDto assetDto) {
         Long id = assetDto.getId();
 
         AssetEntity assetToUpdate = assetRepository.findById(id)
                 .orElseThrow(() -> new AssetNotFoundException(String.format("Asset with given id %d not found", id)));
 
-        assetToUpdate.setAmount(assetDto.getAmount());
+        if (Objects.nonNull(assetDto.getAmount())) {
+            assetToUpdate.setAmount(assetDto.getAmount());
+        }
+
+        if (Objects.nonNull(assetDto.getCategory())) {
+            assetToUpdate.setCategory(assetDto.getCategory());
+        }
+
+        if (Objects.nonNull(assetDto.getIncomeDate())) {
+            assetToUpdate.setIncomeDate(assetDto.getIncomeDate());
+        }
 
         assetRepository.saveAndFlush(assetToUpdate);
 
