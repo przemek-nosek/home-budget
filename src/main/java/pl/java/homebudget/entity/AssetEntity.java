@@ -1,9 +1,6 @@
 package pl.java.homebudget.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import pl.java.homebudget.enums.AssetCategory;
 
 import javax.persistence.*;
@@ -18,6 +15,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class AssetEntity {
     @Id
     @GeneratedValue
