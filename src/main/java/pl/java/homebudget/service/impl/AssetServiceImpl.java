@@ -92,4 +92,5 @@ public class AssetServiceImpl implements AssetService {
 
         return assetMapper.fromAssetToDto(assetToUpdate);
     }
+
 }
