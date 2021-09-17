@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.entity.AssetEntity;
 import pl.java.homebudget.enums.AssetCategory;
+import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.AssetService;
 
@@ -23,11 +24,12 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-class AssetServiceImplTest {
+class AssetServiceImplTest { // TODO: CLEAN UP CODE
 
     @Mock
     AssetRepository repository;
@@ -133,10 +135,35 @@ class AssetServiceImplTest {
 
     @Test
     void deleteAsset() {
+        //when
+        service.deleteAsset(any());
+
+        //then
+        then(repository).should().delete(any());
     }
 
     @Test
-    void deleteAssetById() {
+    void deleteAssetById_successfully() {
+        //given
+        Long id = 1L;
+        given(repository.existsById(id)).willReturn(true);
+
+        //when
+        service.deleteAssetById(id);
+
+        //then
+        then(repository).should().deleteById(id);
+    }
+
+    @Test
+    void deleteAssetById_shouldThrowAssetNotFoundException() {
+        //given
+        Long id = 1L;
+        given(repository.existsById(id)).willReturn(false);
+
+        //when
+        //then
+        assertThrows(AssetNotFoundException.class, () -> service.deleteAssetById(id));
     }
 
     @Test
