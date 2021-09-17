@@ -1,9 +1,13 @@
 package pl.java.homebudget.exception.handler;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.exception.dto.ErrorMessage;
@@ -11,15 +15,19 @@ import pl.java.homebudget.exception.dto.ErrorMessage;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final String CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE = "Validation failed.";
+
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<ErrorMessage> handleGenericException(Exception ex, WebRequest request) {
+        ErrorMessage errorMessage = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, LocalDateTime.now(), ex.getMessage(), Collections.emptyList());
+
+        return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(AssetNotFoundException.class)
     protected <T extends RuntimeException> ResponseEntity<ErrorMessage> handleNotFoundException(T ex) {
@@ -45,5 +53,19 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 errors);
 
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+
+        return new ResponseEntity<>(errors, HttpStatus.OK);
     }
 }

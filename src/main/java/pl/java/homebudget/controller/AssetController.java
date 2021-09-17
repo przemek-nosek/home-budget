@@ -10,7 +10,7 @@ import pl.java.homebudget.service.AssetService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/assets")
+@RequestMapping("/api/v1/assets")
 @AllArgsConstructor
 public class AssetController {
 
@@ -31,10 +31,10 @@ public class AssetController {
     }
 
     @DeleteMapping
-    public ResponseEntity<AssetDto> deleteAsset(@RequestBody AssetDto assetDto) {
+    public ResponseEntity<?> deleteAsset(@RequestBody AssetDto assetDto) {
         assetService.deleteAsset(assetDto);
 
-        return new ResponseEntity<>(assetDto, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")
