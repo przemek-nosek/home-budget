@@ -1,8 +1,6 @@
 package pl.java.homebudget.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import pl.java.homebudget.enums.AssetCategory;
 
 import java.math.BigDecimal;
@@ -12,11 +10,19 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class AssetDto {
     private Long id;
     private BigDecimal amount;
     private Instant incomeDate;
     private AssetCategory category;
+
+    public AssetDto(BigDecimal amount, Instant incomeDate, AssetCategory category) {
+        this.amount = amount;
+        this.incomeDate = incomeDate;
+        this.category = category;
+    }
 
     @Override
     public boolean equals(Object o) {
