@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.entity.AssetEntity;
+import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AssetRepository;
@@ -91,6 +92,14 @@ public class AssetServiceImpl implements AssetService {
         log.info("Asset updated");
 
         return assetMapper.fromAssetToDto(assetToUpdate);
+    }
+
+    @Override
+    public List<AssetDto> getAssetsByCategory(AssetCategory assetCategory) {
+        return assetRepository.getAssetEntitiesByCategory(assetCategory)
+                .stream()
+                .map(assetMapper::fromAssetToDto)
+                .collect(Collectors.toList());
     }
 
 }

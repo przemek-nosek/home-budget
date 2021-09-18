@@ -28,6 +28,7 @@ public class AssetEntity {
     @NotNull(message = "Income date is null.")
     private Instant incomeDate;
 
+    @Enumerated(value = EnumType.STRING)
     private AssetCategory category;
 
     public AssetEntity(BigDecimal amount, Instant incomeDate, AssetCategory category) {

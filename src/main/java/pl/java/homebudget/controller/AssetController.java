@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.java.homebudget.dto.AssetDto;
+import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.service.AssetService;
 
 import java.util.List;
@@ -22,6 +23,15 @@ public class AssetController {
 
         return new ResponseEntity<>(assets, HttpStatus.OK);
     }
+
+    @GetMapping("/{category}")
+    public ResponseEntity<List<AssetDto>> getAssetsByCategory(@PathVariable("category") String category) {
+        List<AssetDto> assetsByCategory = assetService
+                .getAssetsByCategory(AssetCategory.valueOf(category.toUpperCase()));
+
+        return new ResponseEntity<>(assetsByCategory, HttpStatus.OK);
+    }
+
 
     @PostMapping
     public ResponseEntity<AssetDto> addAsset(@RequestBody AssetDto assetDto) {
