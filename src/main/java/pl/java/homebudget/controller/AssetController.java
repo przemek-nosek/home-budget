@@ -8,6 +8,7 @@ import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.service.AssetService;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -24,8 +25,8 @@ public class AssetController {
         return new ResponseEntity<>(assets, HttpStatus.OK);
     }
 
-    @GetMapping("/{category}")
-    public ResponseEntity<List<AssetDto>> getAssetsByCategory(@PathVariable("category") String category) {
+    @GetMapping("/find")
+    public ResponseEntity<List<AssetDto>> getAssetsByCategory(@PathParam("category") String category) {
         List<AssetDto> assetsByCategory = assetService
                 .getAssetsByCategory(AssetCategory.valueOf(category.toUpperCase()));
 
