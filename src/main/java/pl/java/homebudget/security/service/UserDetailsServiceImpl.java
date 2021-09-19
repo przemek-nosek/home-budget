@@ -1,4 +1,4 @@
-package pl.java.homebudget.security;
+package pl.java.homebudget.security.service;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

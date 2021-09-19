@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.java.homebudget.security.UserDetailsServiceImpl;
+import pl.java.homebudget.security.service.UserDetailsServiceImpl;
 
 @EnableWebSecurity
 public class AuthenticationBudgetConfiguration extends WebSecurityConfigurerAdapter {
