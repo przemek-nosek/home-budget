@@ -11,8 +11,7 @@ import java.util.Map;
 
 @Service
 public class JWTService {
-
-    private final int dayInMilliseconds = 86_400_000;
+    private final long dayInMillis = 86_400_000;
     private final String secretKey = "mySecret";
 
     public String generateJWTToken(UserDetails userDetails) {
@@ -22,9 +21,10 @@ public class JWTService {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + dayInMilliseconds))
+                .setExpiration(new Date(System.currentTimeMillis() + dayInMillis))
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+
     }
 }

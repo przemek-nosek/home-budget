@@ -31,6 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class AssetServiceImplTest { // TODO: CLEAN UP CODE
@@ -239,5 +240,25 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
 
         assertThat(mapped).isEqualTo(updateAssetDto);
 
+    }
+
+    @Test
+    void getAssetsByCategory() {
+        //given
+        AssetCategory assetCategory = AssetCategory.SALARY;
+        List<AssetEntity> assetEntity = List.of(new AssetEntity(BigDecimal.ZERO, Instant.now(), AssetCategory.SALARY));
+        given(repository.getAssetEntitiesByCategory(assetCategory)).willReturn(assetEntity);
+
+        //when
+        List<AssetDto> assetsByCategory = service.getAssetsByCategory(assetCategory);
+        AssetDto assetDto = mapper.fromAssetToDto(assetEntity.get(0));
+
+        List<AssetDto> shouldBeEmpty = service.getAssetsByCategory(AssetCategory.OTHER);
+
+        //then
+        then(repository).should(times(2)).getAssetEntitiesByCategory(any());
+        assertThat(shouldBeEmpty).hasSize(0);
+        assertThat(assetsByCategory).hasSize(1);
+        assertThat(assetsByCategory.get(0)).isEqualTo(assetDto);
     }
 }
