@@ -3,6 +3,7 @@ package pl.java.homebudget.service.impl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,10 @@ import java.util.HashMap;
 @Service
 public class JwtService {
 
-    private final String secret = "SECRET";
-    private final int dayInMillis = 86_400_000;
+    @Value("${jwt.secret}")
+    private String secret;
+    @Value("${jwt.expiration}")
+    private int dayInMillis;
 
     public String extractUsername(String token) {
         Claims claims = extractClaims(token);
@@ -46,6 +49,7 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
+        System.out.println(secret);
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("user", userDetails.getUsername());
 
