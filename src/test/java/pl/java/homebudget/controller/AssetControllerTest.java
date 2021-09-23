@@ -3,26 +3,17 @@ package pl.java.homebudget.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.enums.AssetCategory;
-import pl.java.homebudget.security.config.AuthenticationBudgetConfiguration;
+import pl.java.homebudget.security.SecurityConfigurer;
 import pl.java.homebudget.service.AssetService;
 
 import java.math.BigDecimal;
@@ -53,7 +44,7 @@ class AssetControllerTest {
     ObjectMapper objectMapper;
 
     @Autowired
-            AuthenticationBudgetConfiguration authenticationBudgetConfiguration;
+    SecurityConfigurer securityConfigurer;
 
     AssetDto assetDto;
 
