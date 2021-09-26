@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.java.homebudget.dto.AssetDto;
+import pl.java.homebudget.dto.UserLoggedInfo;
+import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
@@ -23,6 +25,7 @@ public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
     private final AssetMapper assetMapper = Mappers.getMapper(AssetMapper.class);
+    private final UserLoggedInfo userLoggedInfo;
 
     @Override
     public List<AssetDto> getAssets() {
@@ -36,7 +39,9 @@ public class AssetServiceImpl implements AssetService {
     public AssetDto addAsset(AssetDto assetDto) {
         log.info("Add asset");
         log.debug("AssetDto details: {}", assetDto);
-        Asset asset = assetMapper.fromDtoToAsset(assetDto);
+
+        AppUser loggedUser = getLoggedUser();
+        Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
 
         Asset savedAsset = assetRepository.save(asset);
         log.info("Asset added");
@@ -47,7 +52,9 @@ public class AssetServiceImpl implements AssetService {
     public void deleteAsset(AssetDto assetDto) {
         log.info("Delete Asset");
         log.debug("AssetDto details: {}", assetDto);
-        Asset asset = assetMapper.fromDtoToAsset(assetDto);
+
+        AppUser loggedUser = getLoggedUser();
+        Asset asset = assetMapper.fromDtoToAsset(assetDto,loggedUser);
 
         assetRepository.delete(asset);
         log.info("Asset deleted");
@@ -101,6 +108,11 @@ public class AssetServiceImpl implements AssetService {
                 .stream()
                 .map(assetMapper::fromAssetToDto)
                 .collect(Collectors.toList());
+    }
+
+    private AppUser getLoggedUser() {
+        log.info("getLoggedUser");
+        return userLoggedInfo.getLoggedAppUser();
     }
 
 }

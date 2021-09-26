@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.java.homebudget.dto.AssetDto;
+import pl.java.homebudget.dto.UserLoggedInfo;
+import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
@@ -37,6 +39,9 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
     @Mock
     AssetRepository repository;
 
+    @Mock
+    UserLoggedInfo userLoggedInfo;
+
     @InjectMocks
     AssetServiceImpl service;
 
@@ -50,9 +55,10 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
     void setUp() {
         //given
         assetDtoList.clear();
-        Asset asset1 = new Asset(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS);
-        Asset asset2 = new Asset(2L, BigDecimal.TEN, Instant.now(), AssetCategory.SALARY);
-        Asset asset3 = new Asset(3L, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
+        AppUser appUser = new AppUser(1L, "admin", "admin");
+        Asset asset1 = new Asset(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS, appUser);
+        Asset asset2 = new Asset(2L, BigDecimal.TEN, Instant.now(), AssetCategory.SALARY, appUser);
+        Asset asset3 = new Asset(3L, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, appUser);
 
         assetDtoList.add(asset1);
         assetDtoList.add(asset2);
@@ -81,7 +87,8 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
     @DisplayName("Should successfully add new asset")
     void addAsset_shouldSuccessfullyAddNewAsset() {
         //given
-        Asset asset = new Asset(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS);
+        AppUser appUser = new AppUser(1L, "admin", "admin");
+        Asset asset = new Asset(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS, appUser);
         AssetDto assetDto = new AssetDto(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS);
         given(repository.save(asset)).willReturn(asset);
 

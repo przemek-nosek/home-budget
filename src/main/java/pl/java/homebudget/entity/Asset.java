@@ -31,6 +31,9 @@ public class Asset {
     @Enumerated(value = EnumType.STRING)
     private AssetCategory category;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private AppUser appUser;
+
     public Asset(BigDecimal amount, Instant incomeDate, AssetCategory category) {
         this.amount = amount;
         this.incomeDate = incomeDate;
@@ -40,12 +43,12 @@ public class Asset {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Asset that)) return false;
-        return Objects.equals(getId(), that.getId());
+        if (!(o instanceof Asset asset)) return false;
+        return getId().equals(asset.getId()) && getAppUser().equals(asset.getAppUser());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getId(), getAppUser());
     }
 }

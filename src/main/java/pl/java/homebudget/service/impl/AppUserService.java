@@ -39,12 +39,7 @@ public class AppUserService implements UserDetailsService {
         log.info("AuthenticationRequest deatails {}", authenticationRequest);
         String username = authenticationRequest.getUsername();
 
-
-        boolean existsByUsername = appUserRepository.existsByUsername(username);
-        if (existsByUsername) {
-            log.error(String.format("Username [%s] already exists", username));
-            throw new UsernameAlreadyExistsException(String.format("Username [%s] already exists", username));
-        }
+        validateIfUserExists(username);
 
         // TODO: Validate credentials
 
@@ -54,5 +49,13 @@ public class AppUserService implements UserDetailsService {
 
         log.info("AppUser saved with id: {}", savedAppUser.getId());
         return savedAppUser.getId();
+    }
+
+    private void validateIfUserExists(String username) {
+        boolean existsByUsername = appUserRepository.existsByUsername(username);
+        if (existsByUsername) {
+            log.error(String.format("Username [%s] already exists", username));
+            throw new UsernameAlreadyExistsException(String.format("Username [%s] already exists", username));
+        }
     }
 }
