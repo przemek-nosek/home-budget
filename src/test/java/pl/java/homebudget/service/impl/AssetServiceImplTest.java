@@ -9,12 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.java.homebudget.dto.AssetDto;
-import pl.java.homebudget.entity.AssetEntity;
+import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AssetRepository;
-import pl.java.homebudget.service.AssetService;
 
 import javax.validation.*;
 import java.math.BigDecimal;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,7 +40,7 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
     @InjectMocks
     AssetServiceImpl service;
 
-    List<AssetEntity> assetDtoList = new ArrayList<>();
+    List<Asset> assetDtoList = new ArrayList<>();
 
     Validator validator;
 
@@ -52,13 +50,13 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
     void setUp() {
         //given
         assetDtoList.clear();
-        AssetEntity assetEntity1 = new AssetEntity(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS);
-        AssetEntity assetEntity2 = new AssetEntity(2L, BigDecimal.TEN, Instant.now(), AssetCategory.SALARY);
-        AssetEntity assetEntity3 = new AssetEntity(3L, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
+        Asset asset1 = new Asset(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS);
+        Asset asset2 = new Asset(2L, BigDecimal.TEN, Instant.now(), AssetCategory.SALARY);
+        Asset asset3 = new Asset(3L, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
 
-        assetDtoList.add(assetEntity1);
-        assetDtoList.add(assetEntity2);
-        assetDtoList.add(assetEntity3);
+        assetDtoList.add(asset1);
+        assetDtoList.add(asset2);
+        assetDtoList.add(asset3);
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
@@ -83,15 +81,15 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
     @DisplayName("Should successfully add new asset")
     void addAsset_shouldSuccessfullyAddNewAsset() {
         //given
-        AssetEntity assetEntity = new AssetEntity(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS);
+        Asset asset = new Asset(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS);
         AssetDto assetDto = new AssetDto(1L, BigDecimal.ONE, Instant.now(), AssetCategory.BONUS);
-        given(repository.save(assetEntity)).willReturn(assetEntity);
+        given(repository.save(asset)).willReturn(asset);
 
         //when
         AssetDto savedAssetDto = service.addAsset(assetDto);
 
         //then
-        then(repository).should().save(assetEntity);
+        then(repository).should().save(asset);
 
         assertThat(savedAssetDto).isEqualTo(assetDto);
     }
@@ -100,44 +98,44 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
     @DisplayName("Should fail when Asset amount is null")
     void addAsset_invalidAmountShouldFailValidation() {
         //given
-        AssetEntity assetEntity = new AssetEntity();
-        assetEntity.setCategory(AssetCategory.OTHER);
-        assetEntity.setIncomeDate(Instant.now());
+        Asset asset = new Asset();
+        asset.setCategory(AssetCategory.OTHER);
+        asset.setIncomeDate(Instant.now());
 
         AssetDto assetDto = new AssetDto();
         assetDto.setCategory(AssetCategory.OTHER);
-        assetDto.setIncomeDate(assetEntity.getIncomeDate());
+        assetDto.setIncomeDate(asset.getIncomeDate());
 
-        given(repository.save(assetEntity)).willThrow(ConstraintViolationException.class);
+        given(repository.save(asset)).willThrow(ConstraintViolationException.class);
 
         //when
         //then
         assertThrows(ConstraintViolationException.class, () -> service.addAsset(assetDto));
-        Set<ConstraintViolation<AssetEntity>> validate = validator.validate(assetEntity);
+        Set<ConstraintViolation<Asset>> validate = validator.validate(asset);
         assertFalse(validate.isEmpty());
-        then(repository).should().save(assetEntity);
+        then(repository).should().save(asset);
     }
 
     @Test
     @DisplayName("Should fail when Asset incomeDate is null")
     void addAsset_invalidIncomeDateShouldFailValidation() {
         //given
-        AssetEntity assetEntity = new AssetEntity();
-        assetEntity.setCategory(AssetCategory.OTHER);
-        assetEntity.setAmount(BigDecimal.ONE);
+        Asset asset = new Asset();
+        asset.setCategory(AssetCategory.OTHER);
+        asset.setAmount(BigDecimal.ONE);
 
         AssetDto assetDto = new AssetDto();
         assetDto.setCategory(AssetCategory.OTHER);
         assetDto.setAmount(BigDecimal.ONE);
 
-        given(repository.save(assetEntity)).willThrow(ConstraintViolationException.class);
+        given(repository.save(asset)).willThrow(ConstraintViolationException.class);
 
         //when
         //then
         assertThrows(ConstraintViolationException.class, () -> service.addAsset(assetDto));
-        Set<ConstraintViolation<AssetEntity>> validate = validator.validate(assetEntity);
+        Set<ConstraintViolation<Asset>> validate = validator.validate(asset);
         assertFalse(validate.isEmpty());
-        then(repository).should().save(assetEntity);
+        then(repository).should().save(asset);
     }
 
     @Test
@@ -193,11 +191,11 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
         AssetDto assetDto = new AssetDto();
         assetDto.setId(1L);
 
-        AssetEntity assetEntity = new AssetEntity();
+        Asset asset = new Asset();
 
-        AssetEntity testUpdateAsset = new AssetEntity(BigDecimal.ONE, Instant.now(), AssetCategory.OTHER);
+        Asset testUpdateAsset = new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.OTHER);
 
-        given(repository.findById(anyLong())).willReturn(Optional.of(assetEntity));
+        given(repository.findById(anyLong())).willReturn(Optional.of(asset));
         given(repository.saveAndFlush(testUpdateAsset)).willReturn(testUpdateAsset);
 
         //when
@@ -222,11 +220,11 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
         assetDto.setAmount(BigDecimal.ONE);
         assetDto.setIncomeDate(Instant.now());
 
-        AssetEntity assetEntity = new AssetEntity();
+        Asset asset = new Asset();
 
-        AssetEntity testUpdateAsset = new AssetEntity(BigDecimal.ONE, Instant.now(), AssetCategory.OTHER);
+        Asset testUpdateAsset = new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.OTHER);
 
-        given(repository.findById(anyLong())).willReturn(Optional.of(assetEntity));
+        given(repository.findById(anyLong())).willReturn(Optional.of(asset));
         given(repository.saveAndFlush(testUpdateAsset)).willReturn(testUpdateAsset);
 
         //when
@@ -246,12 +244,12 @@ class AssetServiceImplTest { // TODO: CLEAN UP CODE
     void getAssetsByCategory() {
         //given
         AssetCategory assetCategory = AssetCategory.SALARY;
-        List<AssetEntity> assetEntity = List.of(new AssetEntity(BigDecimal.ZERO, Instant.now(), AssetCategory.SALARY));
-        given(repository.getAssetEntitiesByCategory(assetCategory)).willReturn(assetEntity);
+        List<Asset> asset = List.of(new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.SALARY));
+        given(repository.getAssetEntitiesByCategory(assetCategory)).willReturn(asset);
 
         //when
         List<AssetDto> assetsByCategory = service.getAssetsByCategory(assetCategory);
-        AssetDto assetDto = mapper.fromAssetToDto(assetEntity.get(0));
+        AssetDto assetDto = mapper.fromAssetToDto(asset.get(0));
 
         List<AssetDto> shouldBeEmpty = service.getAssetsByCategory(AssetCategory.OTHER);
 

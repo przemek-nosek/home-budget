@@ -16,7 +16,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @AllArgsConstructor
-public class AssetEntity {
+public class Asset {
     @Id
     @GeneratedValue
     @Column(updatable = false, nullable = false)
@@ -31,7 +31,7 @@ public class AssetEntity {
     @Enumerated(value = EnumType.STRING)
     private AssetCategory category;
 
-    public AssetEntity(BigDecimal amount, Instant incomeDate, AssetCategory category) {
+    public Asset(BigDecimal amount, Instant incomeDate, AssetCategory category) {
         this.amount = amount;
         this.incomeDate = incomeDate;
         this.category = category;
@@ -40,7 +40,7 @@ public class AssetEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AssetEntity that)) return false;
+        if (!(o instanceof Asset that)) return false;
         return Objects.equals(getId(), that.getId());
     }
 

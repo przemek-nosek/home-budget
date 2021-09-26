@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.java.homebudget.dto.AssetDto;
-import pl.java.homebudget.entity.AssetEntity;
+import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.mapper.AssetMapper;
@@ -35,10 +35,10 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public AssetDto addAsset(AssetDto assetDto) {
         log.info("Add asset");
-        log.debug("AssetDto details: " + assetDto);
-        AssetEntity assetEntity = assetMapper.fromDtoToAsset(assetDto);
+        log.debug("AssetDto details: {}", assetDto);
+        Asset asset = assetMapper.fromDtoToAsset(assetDto);
 
-        AssetEntity savedAsset = assetRepository.save(assetEntity);
+        Asset savedAsset = assetRepository.save(asset);
         log.info("Asset added");
         return assetMapper.fromAssetToDto(savedAsset);
     }
@@ -46,16 +46,16 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public void deleteAsset(AssetDto assetDto) {
         log.info("Delete Asset");
-        log.debug("AssetDto details: " + assetDto);
-        AssetEntity assetEntity = assetMapper.fromDtoToAsset(assetDto);
+        log.debug("AssetDto details: {}", assetDto);
+        Asset asset = assetMapper.fromDtoToAsset(assetDto);
 
-        assetRepository.delete(assetEntity);
+        assetRepository.delete(asset);
         log.info("Asset deleted");
     }
 
     @Override
     public void deleteAssetById(Long id) {
-        log.info("Delete Asset by ID");
+        log.info("Delete Asset by ID: {}", id);
         boolean existsById = assetRepository.existsById(id);
 
         if (!existsById) {
@@ -69,10 +69,10 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public AssetDto updateAsset(AssetDto assetDto) {
         log.info("Update Asset");
-        log.debug("AssetDto details: " + assetDto);
+        log.debug("AssetDto details {} ", assetDto);
         Long id = assetDto.getId();
 
-        AssetEntity assetToUpdate = assetRepository.findById(id)
+        Asset assetToUpdate = assetRepository.findById(id)
                 .orElseThrow(() -> new AssetNotFoundException(String.format("Asset with given id %d not found", id)));
 
         if (Objects.nonNull(assetDto.getAmount())) {
@@ -96,6 +96,7 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public List<AssetDto> getAssetsByCategory(AssetCategory assetCategory) {
+        log.info("Getting Assets by category {}", assetCategory);
         return assetRepository.getAssetEntitiesByCategory(assetCategory)
                 .stream()
                 .map(assetMapper::fromAssetToDto)

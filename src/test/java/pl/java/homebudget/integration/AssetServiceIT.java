@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AssetDto;
-import pl.java.homebudget.entity.AssetEntity;
+import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.AssetService;
@@ -47,12 +47,12 @@ public class AssetServiceIT {
         service.addAsset(assetDto);
 
         //then
-        List<AssetEntity> allAssets = repository.findAll();
+        List<Asset> allAssets = repository.findAll();
         assertThat(allAssets).hasSize(1);
-        AssetEntity assetEntity = allAssets.get(0);
-        assertThat(assetEntity.getAmount()).isEqualTo(assetDto.getAmount());
-        assertThat(assetEntity.getIncomeDate()).isEqualTo(assetDto.getIncomeDate());
-        assertThat(assetEntity.getCategory()).isEqualTo(assetDto.getCategory());
+        Asset asset = allAssets.get(0);
+        assertThat(asset.getAmount()).isEqualTo(assetDto.getAmount());
+        assertThat(asset.getIncomeDate()).isEqualTo(assetDto.getIncomeDate());
+        assertThat(asset.getCategory()).isEqualTo(assetDto.getCategory());
     }
 
     @Test
@@ -71,9 +71,9 @@ public class AssetServiceIT {
     }
 
     private void initDataBase() {
-        AssetEntity entity1 = new AssetEntity(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
-        AssetEntity entity2 = new AssetEntity(BigDecimal.ONE, Instant.now(), AssetCategory.LOAN_RETURNED);
-        AssetEntity entity3 = new AssetEntity(BigDecimal.TEN, Instant.now(), AssetCategory.SALARY);
+        Asset entity1 = new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
+        Asset entity2 = new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.LOAN_RETURNED);
+        Asset entity3 = new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.SALARY);
 
         repository.saveAll(List.of(entity1, entity2, entity3));
     }

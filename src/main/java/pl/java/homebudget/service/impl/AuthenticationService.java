@@ -12,7 +12,7 @@ import pl.java.homebudget.dto.AuthenticationRequest;
 public class AuthenticationService {
 
     private final JwtService jwtService;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final AppUserService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
     public String getAuthenticationToken(AuthenticationRequest authenticationRequest) {
