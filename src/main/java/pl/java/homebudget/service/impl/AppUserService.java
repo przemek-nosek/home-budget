@@ -46,6 +46,7 @@ public class AppUserService implements UserDetailsService {
             throw new UsernameAlreadyExistsException(String.format("Username [%s] already exists", username));
         }
 
+        // TODO: Validate credentials
 
         AppUser appUser = appUserMapper.fromDtoToAppUser(authenticationRequest);
 

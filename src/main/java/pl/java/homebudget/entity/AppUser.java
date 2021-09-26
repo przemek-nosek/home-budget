@@ -23,4 +23,5 @@ public class AppUser {
     @NotNull
     private String password;
 
+
 }

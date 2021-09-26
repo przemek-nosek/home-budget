@@ -13,7 +13,6 @@ public class AppUserMapper {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
     public AppUser fromDtoToAppUser(AuthenticationRequest authenticationRequest) {
         if (authenticationRequest == null) {
             return null;
