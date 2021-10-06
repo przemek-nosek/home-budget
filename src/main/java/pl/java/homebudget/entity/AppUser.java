@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +22,8 @@ public class AppUser {
     @NotNull
     private String password;
 
-
+    public AppUser(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }

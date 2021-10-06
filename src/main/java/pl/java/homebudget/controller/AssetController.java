@@ -33,7 +33,6 @@ public class AssetController {
         return new ResponseEntity<>(assetsByCategory, HttpStatus.OK);
     }
 
-
     @PostMapping
     public ResponseEntity<AssetDto> addAsset(@RequestBody AssetDto assetDto) {
         AssetDto addedAsset = assetService.addAsset(assetDto);
@@ -56,7 +55,7 @@ public class AssetController {
     }
 
     @PutMapping
-    public ResponseEntity<AssetDto> updateAsset(@RequestBody AssetDto assetDto) {
+    public ResponseEntity<AssetDto> updateAsset(@RequestBody AssetDto assetDto) { // TODO: VALIDATE DTO 
         AssetDto updatedAsset = assetService.updateAsset(assetDto);
 
         return new ResponseEntity<>(updatedAsset, HttpStatus.OK);

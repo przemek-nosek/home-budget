@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
@@ -30,7 +31,10 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public List<AssetDto> getAssets() {
         log.info("Get all Assets");
-        return assetRepository.findAll().stream()
+
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        return assetRepository.getAssetsByAppUser(loggedAppUser).stream()
                 .map(assetMapper::fromAssetToDto)
                 .collect(Collectors.toList());
     }
@@ -42,6 +46,7 @@ public class AssetServiceImpl implements AssetService {
 
         AppUser loggedUser = getLoggedUser();
         Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
+        asset.setAppUser(loggedUser);
 
         Asset savedAsset = assetRepository.save(asset);
         log.info("Asset added");
@@ -61,6 +66,7 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    @Transactional
     public void deleteAssetById(Long id) {
         log.info("Delete Asset by ID: {}", id);
         boolean existsById = assetRepository.existsById(id);
@@ -74,6 +80,7 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    @Transactional
     public AssetDto updateAsset(AssetDto assetDto) {
         log.info("Update Asset");
         log.debug("AssetDto details {} ", assetDto);
@@ -90,11 +97,11 @@ public class AssetServiceImpl implements AssetService {
             assetToUpdate.setCategory(assetDto.getCategory());
         }
 
-        if (Objects.nonNull(assetDto.getIncomeDate())) {
-            assetToUpdate.setIncomeDate(assetDto.getIncomeDate());
-        }
+//        if (Objects.nonNull(assetDto.getIncomeDate())) {
+//            assetToUpdate.setIncomeDate(assetDto.getIncomeDate());
+//        }
 
-        assetRepository.saveAndFlush(assetToUpdate);
+//        assetRepository.saveAndFlush(assetToUpdate);
 
         log.info("Asset updated");
 

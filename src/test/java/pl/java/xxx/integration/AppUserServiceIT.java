@@ -1,4 +1,4 @@
-package pl.java.homebudget.integration;
+package pl.java.xxx.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import pl.java.homebudget.service.impl.AppUserService;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -86,7 +85,7 @@ public class AppUserServiceIT {
     }
 
     private void initDatabase() {
-        AppUser appUser = new AppUser(5L, "ada", "ada");
+        AppUser appUser = new AppUser( "ada", "ada");
         repository.save(appUser);
     }
 }

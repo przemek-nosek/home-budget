@@ -1,6 +1,9 @@
 package pl.java.homebudget.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import pl.java.homebudget.enums.AssetCategory;
 
 import javax.persistence.*;
@@ -15,7 +18,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 public class Asset {
     @Id
     @GeneratedValue
@@ -32,19 +34,21 @@ public class Asset {
     private AssetCategory category;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ToString.Exclude
     private AppUser appUser;
 
-    public Asset(BigDecimal amount, Instant incomeDate, AssetCategory category) {
+    public Asset(BigDecimal amount, Instant incomeDate, AssetCategory category, AppUser appUser) {
         this.amount = amount;
         this.incomeDate = incomeDate;
         this.category = category;
+        this.appUser = appUser;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Asset asset)) return false;
-        return getId().equals(asset.getId()) && getAppUser().equals(asset.getAppUser());
+        return Objects.equals(getId(), asset.getId()) && Objects.equals(getAppUser(), asset.getAppUser());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package pl.java.homebudget.controller;
+package pl.java.xxx.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
