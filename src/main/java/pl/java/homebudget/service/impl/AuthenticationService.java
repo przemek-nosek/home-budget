@@ -15,7 +15,7 @@ import pl.java.homebudget.exception.AppUserInvalidUsernameOrPasswordException;
 public class AuthenticationService {
 
     private final JwtService jwtService;
-    private final AppUserService userDetailsService;
+    private final AppUserService appUserService;
     private final AuthenticationManager authenticationManager;
 
     public String getAuthenticationToken(AuthenticationRequest authenticationRequest) {
@@ -28,7 +28,7 @@ public class AuthenticationService {
             throw new AppUserInvalidUsernameOrPasswordException("Invalid username or password");
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        UserDetails userDetails = appUserService.loadUserByUsername(authenticationRequest.getUsername());
 
         return jwtService.generateToken(userDetails);
     }

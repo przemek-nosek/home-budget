@@ -48,7 +48,6 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        System.out.println(secret);
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("user", userDetails.getUsername());
 

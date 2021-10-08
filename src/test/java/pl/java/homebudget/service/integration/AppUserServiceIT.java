@@ -24,9 +24,6 @@ class AppUserServiceIT {
     private AppUserRepository appUserRepository;
 
     @Autowired
-    private AppUserMapper appUserMapper;
-
-    @Autowired
     private AppUserService appUserService;
 
     private final static String BCRYPT_PREFIX = "$2a$10$";
