@@ -10,6 +10,8 @@ import pl.java.homebudget.dto.AuthenticationResponse;
 import pl.java.homebudget.service.impl.AppUserService;
 import pl.java.homebudget.service.impl.AuthenticationService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
@@ -25,7 +27,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public Long saveUserDetails(@RequestBody AuthenticationRequest authenticationRequest) {
+    public Long saveUserDetails(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
         return appUserService.saveUser(authenticationRequest);
     }
 }

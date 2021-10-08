@@ -41,8 +41,6 @@ public class AppUserService implements UserDetailsService {
 
         validateIfUserExists(username);
 
-        // TODO: Validate credentials
-
         AppUser appUser = appUserMapper.fromDtoToAppUser(authenticationRequest);
 
         AppUser savedAppUser = appUserRepository.save(appUser);
