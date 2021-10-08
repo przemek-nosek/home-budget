@@ -97,12 +97,6 @@ public class AssetServiceImpl implements AssetService {
             assetToUpdate.setCategory(assetDto.getCategory());
         }
 
-//        if (Objects.nonNull(assetDto.getIncomeDate())) {
-//            assetToUpdate.setIncomeDate(assetDto.getIncomeDate());
-//        }
-
-//        assetRepository.saveAndFlush(assetToUpdate);
-
         log.info("Asset updated");
 
         return assetMapper.fromAssetToDto(assetToUpdate);

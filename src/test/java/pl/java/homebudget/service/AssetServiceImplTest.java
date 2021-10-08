@@ -60,7 +60,7 @@ class AssetServiceImplTest {
 
         //then
         List<AssetDto> assetDtos = assets.stream()
-                .map(asset -> assetMapper.fromAssetToDto(asset))
+                .map(assetMapper::fromAssetToDto)
                 .collect(Collectors.toList());
 
         then(assetRepository).should().getAssetsByAppUser(any());
