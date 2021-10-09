@@ -23,25 +23,22 @@ public class HomeBudgetApplication {
     public static void main(String[] args) {
         SpringApplication.run(HomeBudgetApplication.class, args);
     }
-
+//
 //    @Bean
 //    CommandLineRunner commandLineRunner(AppUserRepository appUserRepository, AssetRepository assetRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-//        AppUser appUser = new AppUser(1L, "admin", "admin");
-//        String admin = bCryptPasswordEncoder.encode("admin");
-//appUser.setPassword(admin);
+//        AppUser appUser = new AppUser("dingo", "dingo");
+//        String admin = bCryptPasswordEncoder.encode("dingo");
+//        appUser.setPassword(admin);
 //        appUserRepository.save(appUser);
 //
 //
-//        Asset asset = new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
-//        Asset asset2 = new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.BONUS);
-//        Asset asset3 = new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.SALARY);
-//        asset.setAppUser(appUser);
-//        asset2.setAppUser(appUser);
-//        asset3.setAppUser(appUser);
+//        Asset asset = new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, appUser);
+//        Asset asset2 = new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.BONUS, appUser);
+//        Asset asset3 = new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.SALARY, appUser);
 //        assetRepository.save(asset);
 //        assetRepository.save(asset2);
 //        assetRepository.save(asset3);
 //
-//return null;
+//        return null;
 //    }
 }

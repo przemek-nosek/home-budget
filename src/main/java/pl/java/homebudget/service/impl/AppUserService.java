@@ -7,11 +7,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AuthenticationRequest;
+import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.exception.UsernameAlreadyExistsException;
 import pl.java.homebudget.mapper.AppUserMapper;
 import pl.java.homebudget.repository.AppUserRepository;
+import pl.java.homebudget.repository.AssetRepository;
 
 import java.util.ArrayList;
 
@@ -22,6 +25,8 @@ public class AppUserService implements UserDetailsService {
 
     private final AppUserRepository appUserRepository;
     private final AppUserMapper appUserMapper;
+    private final AssetRepository assetRepository;
+    private final UserLoggedInfo userLoggedInfo;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -55,5 +60,13 @@ public class AppUserService implements UserDetailsService {
             log.error(String.format("Username [%s] already exists", username));
             throw new UsernameAlreadyExistsException(String.format("Username [%s] already exists", username));
         }
+    }
+
+    @Transactional
+    public void deleteUserAndHisAssets() {
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        assetRepository.deleteAllByAppUser(loggedAppUser);
+        appUserRepository.delete(loggedAppUser);
     }
 }

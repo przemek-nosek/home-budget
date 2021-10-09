@@ -171,6 +171,9 @@ public class AssetServiceImplIT {
         //then
         List<Asset> afterDeletion = assetRepository.getAssetsByAppUser(appUser);
         assertThat(afterDeletion).isEmpty();
+
+        List<Asset> allAssets = assetRepository.findAll();
+        assertThat(allAssets).isNotEmpty();
     }
 
     private AppUser initFirstUser() {

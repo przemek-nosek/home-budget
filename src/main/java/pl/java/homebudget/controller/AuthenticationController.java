@@ -1,10 +1,9 @@
 package pl.java.homebudget.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pl.java.homebudget.dto.AuthenticationRequest;
 import pl.java.homebudget.dto.AuthenticationResponse;
 import pl.java.homebudget.service.impl.AppUserService;
@@ -13,7 +12,7 @@ import pl.java.homebudget.service.impl.AuthenticationService;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user")
 @AllArgsConstructor
 public class AuthenticationController {
 
@@ -29,5 +28,12 @@ public class AuthenticationController {
     @PostMapping("/register")
     public Long saveUserDetails(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
         return appUserService.saveUser(authenticationRequest);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteUserAndHisAssets() {
+        appUserService.deleteUserAndHisAssets();
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
