@@ -13,4 +13,6 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     List<Asset> getAssetEntitiesByCategory(AssetCategory category);
 
     List<Asset> getAssetsByAppUser(AppUser appUser);
+
+    void deleteAllByAppUser(AppUser appUser);
 }

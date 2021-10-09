@@ -7,7 +7,6 @@ import lombok.ToString;
 import pl.java.homebudget.enums.AssetCategory;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
@@ -24,10 +23,10 @@ public class Asset {
     @Column(updatable = false, nullable = false)
     private Long id;
 
-    @NotNull(message = "Amount is null.")
+    @Column(nullable = false)
     private BigDecimal amount;
 
-    @NotNull(message = "Income date is null.")
+    @Column(nullable = false)
     private Instant incomeDate;
 
     @Enumerated(value = EnumType.STRING)

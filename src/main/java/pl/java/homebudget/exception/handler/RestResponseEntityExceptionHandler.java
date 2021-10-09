@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import pl.java.homebudget.exception.AppUserInvalidUsernameOrPasswordException;
 import pl.java.homebudget.exception.AssetNotFoundException;
+import pl.java.homebudget.exception.UsernameAlreadyExistsException;
 import pl.java.homebudget.exception.dto.ErrorMessage;
 
 import javax.validation.ConstraintViolation;
@@ -24,15 +26,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     private static final String CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE = "Validation failed.";
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorMessage> handleGenericException(Exception ex, WebRequest request) {
-        ErrorMessage errorMessage = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, LocalDateTime.now(), ex.getMessage(), Collections.emptyList());
+    protected ResponseEntity<ErrorMessage> handleGenericException(Exception ex) {
+        ErrorMessage errorMessage = getErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), Collections.emptyList());
 
         return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({AssetNotFoundException.class, UsernameNotFoundException.class})
     protected <T extends RuntimeException> ResponseEntity<ErrorMessage> handleNotFoundException(T ex) {
-        ErrorMessage errorMessage = new ErrorMessage(HttpStatus.NOT_FOUND, LocalDateTime.now(), ex.getMessage(), Collections.emptyList());
+        ErrorMessage errorMessage = getErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage(), Collections.emptyList());
 
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
@@ -47,13 +49,23 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             errors.add(constraintViolation.getMessageTemplate());
         }
 
-        ErrorMessage errorMessage = new ErrorMessage(
-                HttpStatus.BAD_REQUEST,
-                LocalDateTime.now(),
-                CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE,
-                errors);
+        ErrorMessage errorMessage = getErrorMessage(HttpStatus.BAD_REQUEST, CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE, errors);
 
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AppUserInvalidUsernameOrPasswordException.class)
+    protected ResponseEntity<ErrorMessage> handleAppUserInvalidUsernameOrPasswordException(AppUserInvalidUsernameOrPasswordException ex) {
+        ErrorMessage errorMessage = getErrorMessage(HttpStatus.FORBIDDEN, ex.getMessage(), Collections.emptyList());
+
+        return new ResponseEntity<>(errorMessage, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    protected ResponseEntity<ErrorMessage> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+        ErrorMessage errorMessage = getErrorMessage(HttpStatus.CONFLICT, ex.getMessage(), Collections.emptyList());
+
+        return new ResponseEntity<>(errorMessage, HttpStatus.CONFLICT);
     }
 
 
@@ -66,7 +78,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             errors.put(fieldName, errorMessage);
         });
 
-
         return new ResponseEntity<>(errors, HttpStatus.OK);
     }
+
+
+    private ErrorMessage getErrorMessage(HttpStatus httpStatus, String message, List<String> errors) {
+        return new ErrorMessage(httpStatus, LocalDateTime.now(), message, errors);
+    }
+
 }

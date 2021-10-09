@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.java.homebudget.dto.AssetDto;
+import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.service.AssetService;
 
+import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class AssetController {
     }
 
     @PostMapping
-    public ResponseEntity<AssetDto> addAsset(@RequestBody AssetDto assetDto) {
+    public ResponseEntity<AssetDto> addAsset(@Valid @RequestBody AssetDto assetDto) {
         AssetDto addedAsset = assetService.addAsset(assetDto);
 
         return new ResponseEntity<>(addedAsset, HttpStatus.CREATED);
@@ -47,6 +49,13 @@ public class AssetController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping("/user")
+    public ResponseEntity<?> deleteAssetsByAppUser() {
+        assetService.deleteAssetsByAppUser();
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAssetById(@PathVariable("id") Long id) {
         assetService.deleteAssetById(id);
@@ -55,7 +64,7 @@ public class AssetController {
     }
 
     @PutMapping
-    public ResponseEntity<AssetDto> updateAsset(@RequestBody AssetDto assetDto) { // TODO: VALIDATE DTO 
+    public ResponseEntity<AssetDto> updateAsset(@RequestBody AssetDto assetDto) {
         AssetDto updatedAsset = assetService.updateAsset(assetDto);
 
         return new ResponseEntity<>(updatedAsset, HttpStatus.OK);

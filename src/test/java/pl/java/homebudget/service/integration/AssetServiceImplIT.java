@@ -157,6 +157,22 @@ public class AssetServiceImplIT {
                 .forEach(assetDto -> assertThat(assetDto.getCategory()).isEqualTo(assetCategory));
     }
 
+    @Test
+    void shouldDeleteAllAssetsByAppUser() {
+        //given
+        initDatabase();
+        AppUser appUser = appUserRepository.findByUsername("username").get();
+        //when
+        List<Asset> assetList = assetRepository.getAssetsByAppUser(appUser);
+        assertThat(assetList).isNotEmpty();
+
+        assetService.deleteAssetsByAppUser();
+
+        //then
+        List<Asset> afterDeletion = assetRepository.getAssetsByAppUser(appUser);
+        assertThat(afterDeletion).isEmpty();
+    }
+
     private AppUser initFirstUser() {
         AppUser appUser = new AppUser("username", "password");
         return appUserRepository.save(appUser);

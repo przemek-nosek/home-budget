@@ -111,6 +111,16 @@ public class AssetServiceImpl implements AssetService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public void deleteAssetsByAppUser() {
+        AppUser loggedUser = getLoggedUser();
+
+        log.info("deleteAssetsByAppUser - appUser {}", loggedUser);
+
+        assetRepository.deleteAllByAppUser(loggedUser);
+    }
+
     private AppUser getLoggedUser() {
         log.info("getLoggedUser");
         return userLoggedInfo.getLoggedAppUser();
