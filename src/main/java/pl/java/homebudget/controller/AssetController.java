@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.java.homebudget.dto.AssetDto;
-import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.service.AssetService;
 

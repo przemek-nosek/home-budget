@@ -4,5 +4,5 @@ public enum ExpensesCategory {
     FOR_LIFE,
     EDUCATION,
     FUN,
-    OTHERS
+    OTHER
 }

@@ -31,7 +31,7 @@ public class AuthenticationController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteUserAndHisAssets() {
+    public ResponseEntity<?> deleteUserAndHisAssets() { // TODO: DELETE USER AND ALL STUFF RELATED TO HIM
         appUserService.deleteUserAndHisAssets();
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

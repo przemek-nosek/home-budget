@@ -9,9 +9,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
+import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.AssetCategory;
+import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
+import pl.java.homebudget.repository.ExpenseRepository;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -25,9 +28,13 @@ public class HomeBudgetApplication {
     }
 
 //    @Bean
-//    CommandLineRunner commandLineRunner(AppUserRepository appUserRepository, AssetRepository assetRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-//        AppUser appUser = new AppUser("dingo", "dingo");
-//        String admin = bCryptPasswordEncoder.encode("dingo");
+//    CommandLineRunner commandLineRunner(AppUserRepository appUserRepository,
+//                                        AssetRepository assetRepository,
+//                                        ExpenseRepository expenseRepository,
+//                                        BCryptPasswordEncoder bCryptPasswordEncoder) {
+//
+//        AppUser appUser = new AppUser("dingo1", "dingo1");
+//        String admin = bCryptPasswordEncoder.encode("dingo1");
 //        appUser.setPassword(admin);
 //        appUserRepository.save(appUser);
 //
@@ -38,6 +45,14 @@ public class HomeBudgetApplication {
 //        assetRepository.save(asset);
 //        assetRepository.save(asset2);
 //        assetRepository.save(asset3);
+//
+//
+//        Expense expense = new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser);
+//        Expense expense2 = new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.EDUCATION, appUser);
+//        Expense expense3 = new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser);
+//        expenseRepository.save(expense);
+//        expenseRepository.save(expense2);
+//        expenseRepository.save(expense3);
 //
 //        return null;
 //    }

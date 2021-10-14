@@ -162,19 +162,20 @@ class AssetServiceImplTest {
         //given
         AssetCategory assetCategory = AssetCategory.OTHER;
         AppUser appUser = new AppUser("user", "password");
-        given(assetRepository.getAssetEntitiesByCategory(assetCategory)).willReturn(
+        given(assetRepository.getAssetEntitiesByCategoryAndAppUser(assetCategory, appUser)).willReturn(
                 List.of(
                         new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, appUser),
                         new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.OTHER, appUser),
                         new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.OTHER, appUser)
                 )
         );
+        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
 
         //when
         List<AssetDto> assetsByCategory = assetService.getAssetsByCategory(assetCategory);
 
         //then
         assertThat(assetsByCategory).hasSize(3);
-        then(assetRepository).should().getAssetEntitiesByCategory(assetCategory);
+        then(assetRepository).should().getAssetEntitiesByCategoryAndAppUser(assetCategory, appUser);
     }
 }

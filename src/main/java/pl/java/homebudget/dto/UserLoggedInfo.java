@@ -1,6 +1,7 @@
 package pl.java.homebudget.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -11,6 +12,7 @@ import pl.java.homebudget.repository.AppUserRepository;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class UserLoggedInfo {
 
     private final AppUserRepository appUserRepository;
@@ -18,6 +20,7 @@ public class UserLoggedInfo {
     public AppUser getLoggedAppUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = ((User) authentication.getPrincipal()).getUsername();
+        log.info("getLoggedAppUser - username: {}", username);
 
         return appUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));

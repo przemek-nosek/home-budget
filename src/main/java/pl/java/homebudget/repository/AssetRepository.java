@@ -10,9 +10,10 @@ import java.util.List;
 
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
-    List<Asset> getAssetEntitiesByCategory(AssetCategory category);
+    List<Asset> getAssetEntitiesByCategoryAndAppUser(AssetCategory category, AppUser appUser);
 
     List<Asset> getAssetsByAppUser(AppUser appUser);
 
     void deleteAllByAppUser(AppUser appUser);
 }
+

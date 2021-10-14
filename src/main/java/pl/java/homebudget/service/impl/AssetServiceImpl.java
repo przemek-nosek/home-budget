@@ -44,7 +44,7 @@ public class AssetServiceImpl implements AssetService {
         log.info("Add asset");
         log.debug("AssetDto details: {}", assetDto);
 
-        AppUser loggedUser = getLoggedUser();
+        AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
         Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
         asset.setAppUser(loggedUser);
 
@@ -58,7 +58,7 @@ public class AssetServiceImpl implements AssetService {
         log.info("Delete Asset");
         log.debug("AssetDto details: {}", assetDto);
 
-        AppUser loggedUser = getLoggedUser();
+        AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
         Asset asset = assetMapper.fromDtoToAsset(assetDto,loggedUser);
 
         assetRepository.delete(asset);
@@ -105,7 +105,9 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public List<AssetDto> getAssetsByCategory(AssetCategory assetCategory) {
         log.info("Getting Assets by category {}", assetCategory);
-        return assetRepository.getAssetEntitiesByCategory(assetCategory)
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        return assetRepository.getAssetEntitiesByCategoryAndAppUser(assetCategory, loggedAppUser)
                 .stream()
                 .map(assetMapper::fromAssetToDto)
                 .collect(Collectors.toList());
@@ -114,16 +116,10 @@ public class AssetServiceImpl implements AssetService {
     @Override
     @Transactional
     public void deleteAssetsByAppUser() {
-        AppUser loggedUser = getLoggedUser();
+        AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
 
         log.info("deleteAssetsByAppUser - appUser {}", loggedUser);
 
         assetRepository.deleteAllByAppUser(loggedUser);
     }
-
-    private AppUser getLoggedUser() {
-        log.info("getLoggedUser");
-        return userLoggedInfo.getLoggedAppUser();
-    }
-
 }
