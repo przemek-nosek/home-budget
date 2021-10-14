@@ -13,4 +13,10 @@ public interface ExpenseService {
     void deleteExpense(ExpenseDto expenseDto);
 
     List<ExpenseDto> getExpensesByCategory(ExpensesCategory expensesCategory);
+
+    void deleteExpenseById(Long id);
+
+    void deleteExpensesByAppUser();
+
+    ExpenseDto updateExpense(ExpenseDto expenseDto);
 }

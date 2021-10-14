@@ -118,7 +118,7 @@ public class AssetServiceImpl implements AssetService {
     public void deleteAssetsByAppUser() {
         AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
 
-        log.info("deleteAssetsByAppUser - appUser {}", loggedUser);
+        log.info("deleteAssetsByAppUser");
 
         assetRepository.deleteAllByAppUser(loggedUser);
     }

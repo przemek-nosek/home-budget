@@ -3,6 +3,7 @@ package pl.java.homebudget.dto;
 import lombok.*;
 import pl.java.homebudget.enums.AssetCategory;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -18,6 +19,7 @@ public class AssetDto {
     private Long id;
 
     @NotNull(message = "Amount is null.")
+    @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal amount;
 
     @NotNull(message = "Income date is null.")

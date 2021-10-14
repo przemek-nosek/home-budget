@@ -4,16 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.ExpenseDto;
 import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.ExpensesCategory;
+import pl.java.homebudget.exception.ExpenseNotFoundException;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.ExpenseService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +57,19 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
+    public List<ExpenseDto> getExpensesByCategory(ExpensesCategory expensesCategory) {
+        log.info("getExpensesByCategory");
+        log.debug("expensesCategory: {}", expensesCategory);
+
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        return expenseRepository.findAllByCategoryAndAppUser(expensesCategory, loggedAppUser)
+                .stream()
+                .map(expenseMapper::fromAssetToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteExpense(ExpenseDto expenseDto) {
         log.info("deleteExpense");
         log.debug("expenseDto {}", expenseDto);
@@ -67,15 +83,49 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseDto> getExpensesByCategory(ExpensesCategory expensesCategory) {
-        log.info("getExpensesByCategory");
-        log.debug("expensesCategory: {}", expensesCategory);
+    @Transactional
+    public void deleteExpenseById(Long id) {
+        log.info("deleteExpenseById");
+
+        boolean existsById = expenseRepository.existsById(id);
+
+        if (!existsById) {
+            throw new ExpenseNotFoundException(String.format("Expense with given id %d not found", id));
+        }
+
+        expenseRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteExpensesByAppUser() {
+        log.info("deleteExpensesByAppUser");
 
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
-        return expenseRepository.findAllByCategoryAndAppUser(expensesCategory, loggedAppUser)
-                .stream()
-                .map(expenseMapper::fromAssetToDto)
-                .collect(Collectors.toList());
+        expenseRepository.deleteAllByAppUser(loggedAppUser);
+    }
+
+    @Override
+    @Transactional
+    public ExpenseDto updateExpense(ExpenseDto expenseDto) {
+        log.info("updateExpense");
+        log.debug("expenseDto: {}", expenseDto);
+
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        Long expenseDtoId = expenseDto.getId();
+        Expense expense = expenseRepository.findByIdAndAppUser(expenseDtoId, loggedAppUser)
+                .orElseThrow(() -> new ExpenseNotFoundException(String.format("Expense with given id %d not found", expenseDtoId)));
+
+        if (Objects.nonNull(expenseDto.getAmount())) {
+            expense.setAmount(expenseDto.getAmount());
+        }
+
+        if (Objects.nonNull(expenseDto.getCategory())) {
+            expense.setCategory(expenseDto.getCategory());
+        }
+
+
+        return expenseMapper.fromAssetToDto(expense);
     }
 }

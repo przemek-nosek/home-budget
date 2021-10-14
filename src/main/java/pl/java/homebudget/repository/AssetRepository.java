@@ -7,6 +7,7 @@ import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
@@ -15,5 +16,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     List<Asset> getAssetsByAppUser(AppUser appUser);
 
     void deleteAllByAppUser(AppUser appUser);
+
+    Optional<Asset> findByIdAndAppUser(Long id, AppUser appUser);
 }
 

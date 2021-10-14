@@ -3,6 +3,7 @@ package pl.java.homebudget.dto;
 import lombok.*;
 import pl.java.homebudget.enums.ExpensesCategory;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -17,6 +18,7 @@ public class ExpenseDto {
     private Long id;
 
     @NotNull(message = "Amount is null.")
+    @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal amount;
 
     @NotNull(message = "Purchase date date is null.")

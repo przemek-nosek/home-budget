@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pl.java.homebudget.exception.AppUserInvalidUsernameOrPasswordException;
 import pl.java.homebudget.exception.AssetNotFoundException;
+import pl.java.homebudget.exception.ExpenseNotFoundException;
 import pl.java.homebudget.exception.UsernameAlreadyExistsException;
 import pl.java.homebudget.exception.dto.ErrorMessage;
 
@@ -32,7 +33,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({AssetNotFoundException.class, UsernameNotFoundException.class})
+    @ExceptionHandler({AssetNotFoundException.class, UsernameNotFoundException.class, ExpenseNotFoundException.class})
     protected <T extends RuntimeException> ResponseEntity<ErrorMessage> handleNotFoundException(T ex) {
         ErrorMessage errorMessage = getErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage(), Collections.emptyList());
 

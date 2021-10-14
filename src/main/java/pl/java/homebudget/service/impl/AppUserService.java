@@ -63,7 +63,7 @@ public class AppUserService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteUserAndHisAssets() {
+    public void deleteUserAndHisAssets() { // TODO: WRITE TEST FOR THIS METHOD
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
         assetRepository.deleteAllByAppUser(loggedAppUser);
