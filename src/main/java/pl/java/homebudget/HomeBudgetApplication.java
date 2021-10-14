@@ -23,7 +23,7 @@ public class HomeBudgetApplication {
     public static void main(String[] args) {
         SpringApplication.run(HomeBudgetApplication.class, args);
     }
-//
+
 //    @Bean
 //    CommandLineRunner commandLineRunner(AppUserRepository appUserRepository, AssetRepository assetRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
 //        AppUser appUser = new AppUser("dingo", "dingo");
