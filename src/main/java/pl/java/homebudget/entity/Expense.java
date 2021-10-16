@@ -20,6 +20,7 @@ import java.util.Objects;
 public class Expense {
     @Id
     @GeneratedValue
+    @Column(updatable = false, nullable = false)
     private Long id;
 
     private BigDecimal amount;
@@ -32,13 +33,6 @@ public class Expense {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ToString.Exclude
     private AppUser appUser;
-
-    public Expense(BigDecimal amount, Instant purchaseDate, ExpensesCategory category, AppUser appUser) {
-        this.amount = amount;
-        this.purchaseDate = purchaseDate;
-        this.category = category;
-        this.appUser = appUser;
-    }
 
     @Override
     public boolean equals(Object o) {

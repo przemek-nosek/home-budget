@@ -86,18 +86,21 @@ public class AssetServiceImpl implements AssetService {
         log.debug("AssetDto details {} ", assetDto);
         Long id = assetDto.getId();
 
-        Asset assetToUpdate = assetRepository.findById(id)
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        Asset assetToUpdate = assetRepository.findByIdAndAppUser(id, loggedAppUser)
                 .orElseThrow(() -> new AssetNotFoundException(String.format("Asset with given id %d not found", id)));
 
-        if (Objects.nonNull(assetDto.getAmount())) {
+        if (Objects.nonNull(assetDto.getAmount()) && !assetDto.getAmount().equals(assetToUpdate.getAmount())) {
             assetToUpdate.setAmount(assetDto.getAmount());
         }
 
-        if (Objects.nonNull(assetDto.getCategory())) {
+        if (Objects.nonNull(assetDto.getCategory()) && !assetDto.getCategory().equals(assetToUpdate.getCategory())) {
             assetToUpdate.setCategory(assetDto.getCategory());
         }
 
         log.info("Asset updated");
+
 
         return assetMapper.fromAssetToDto(assetToUpdate);
     }

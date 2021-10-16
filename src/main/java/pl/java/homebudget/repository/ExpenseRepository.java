@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
-
     List<Expense> findAllByAppUser(AppUser appUser);
 
     List<Expense> findAllByCategoryAndAppUser(ExpensesCategory category, AppUser appUser);
