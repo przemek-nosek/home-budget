@@ -134,6 +134,7 @@ public class AssetServiceImplIT {
     @Test
     void shouldNotUpdateAsset_WhenItDoesNotExistById() {
         //given
+        initFirstUser();
         Long notExistsId = -52L;
         AssetDto assetDto = new AssetDto(notExistsId, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
 

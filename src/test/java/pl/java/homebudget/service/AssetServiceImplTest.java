@@ -131,8 +131,10 @@ class AssetServiceImplTest {
         AssetDto assetDto = new AssetDto(1L, BigDecimal.TEN, Instant.now(), AssetCategory.BONUS);
         AppUser appUser = new AppUser("username", "password");
         Asset asset = new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, appUser);
+//        asset.setId(1L);
 
-        given(assetRepository.findById(anyLong())).willReturn(Optional.of(asset));
+        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(assetRepository.findByIdAndAppUser(assetDto.getId(), appUser)).willReturn(Optional.of(asset));
 
         //when
         AssetDto updatedAsset = assetService.updateAsset(assetDto);
@@ -140,20 +142,20 @@ class AssetServiceImplTest {
         //then
         assertThat(updatedAsset.getCategory()).isEqualTo(assetDto.getCategory());
         assertThat(updatedAsset.getAmount()).isEqualTo(assetDto.getAmount());
-        then(assetRepository).should().findById(anyLong());
+        then(assetRepository).should().findByIdAndAppUser(anyLong(), any());
         then(assetRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
     void updateAsset_fails_andThrowsAssetNotFoundException() {
         //given
-        AssetDto assetDto = new AssetDto(1L, BigDecimal.TEN, Instant.now(), AssetCategory.BONUS);
-        given(assetRepository.findById(anyLong())).willThrow(AssetNotFoundException.class);
+        AssetDto assetDto = new AssetDto(-1L, BigDecimal.TEN, Instant.now(), AssetCategory.BONUS);
+        given(assetRepository.findByIdAndAppUser(anyLong(), any())).willThrow(AssetNotFoundException.class);
 
         //when
         //then
         assertThrows(AssetNotFoundException.class, () -> assetService.updateAsset(assetDto));
-        then(assetRepository).should().findById(anyLong());
+        then(assetRepository).should().findByIdAndAppUser(anyLong(), any());
 
     }
 
