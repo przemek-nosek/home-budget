@@ -59,7 +59,7 @@ public class AssetServiceImpl implements AssetService {
         log.debug("AssetDto details: {}", assetDto);
 
         AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
-        Asset asset = assetMapper.fromDtoToAsset(assetDto,loggedUser);
+        Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
 
         assetRepository.delete(asset);
         log.info("Asset deleted");

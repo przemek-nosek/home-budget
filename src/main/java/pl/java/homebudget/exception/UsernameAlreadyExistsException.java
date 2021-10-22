@@ -1,6 +1,6 @@
 package pl.java.homebudget.exception;
 
-public class UsernameAlreadyExistsException extends RuntimeException{
+public class UsernameAlreadyExistsException extends RuntimeException {
     public UsernameAlreadyExistsException() {
     }
 

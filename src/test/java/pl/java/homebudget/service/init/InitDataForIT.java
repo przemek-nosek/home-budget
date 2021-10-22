@@ -10,13 +10,13 @@ import pl.java.homebudget.repository.AppUserRepository;
 @SpringBootTest
 @Transactional
 @WithMockUser(username = "user", password = "password")
-public class InitDataForIT {
+public abstract class InitDataForIT {
 
     @Autowired
     private AppUserRepository appUserRepository;
 
-    private final static String USERNAME = "user";
-    private final static String PASSWORD = "password";
+    protected final static String USERNAME = "user";
+    protected final static String PASSWORD = "password";
 
     protected AppUser initDatabaseWithUser() {
         AppUser appUser = new AppUser(USERNAME, PASSWORD);

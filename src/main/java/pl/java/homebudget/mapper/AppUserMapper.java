@@ -2,7 +2,6 @@ package pl.java.homebudget.mapper;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.java.homebudget.dto.AuthenticationRequest;
 import pl.java.homebudget.entity.AppUser;

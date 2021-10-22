@@ -1,7 +1,6 @@
 package pl.java.homebudget.service;
 
 import pl.java.homebudget.dto.AssetDto;
-import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.enums.AssetCategory;
 
 import java.util.List;

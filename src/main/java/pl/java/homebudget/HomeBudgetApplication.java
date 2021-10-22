@@ -1,23 +1,8 @@
 package pl.java.homebudget;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import pl.java.homebudget.entity.AppUser;
-import pl.java.homebudget.entity.Asset;
-import pl.java.homebudget.entity.Expense;
-import pl.java.homebudget.enums.AssetCategory;
-import pl.java.homebudget.enums.ExpensesCategory;
-import pl.java.homebudget.repository.AppUserRepository;
-import pl.java.homebudget.repository.AssetRepository;
-import pl.java.homebudget.repository.ExpenseRepository;
-
-import java.math.BigDecimal;
-import java.time.Instant;
 
 @SpringBootApplication
 @PropertySource("classpath:app.properties")

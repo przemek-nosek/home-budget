@@ -42,8 +42,7 @@ class AppUserServiceIT extends InitDataForIT {
     private final static String BCRYPT_PREFIX = "$2a$10$";
     private final static String BCRYPT_REGEX = "^[$]2[abxy]?[$](?:0[4-9]|[12][0-9]|3[01])[$][./0-9a-zA-Z]{53}$";
 
-    private final static String USERNAME = "user";
-    private final static String PASSWORD = "password";
+
 
     @Test
     void shouldLoadUserByUsername() {
