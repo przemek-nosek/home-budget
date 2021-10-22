@@ -15,6 +15,7 @@ import pl.java.homebudget.exception.UsernameAlreadyExistsException;
 import pl.java.homebudget.mapper.AppUserMapper;
 import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
+import pl.java.homebudget.repository.ExpenseRepository;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,7 @@ public class AppUserService implements UserDetailsService {
     private final AppUserRepository appUserRepository;
     private final AppUserMapper appUserMapper;
     private final AssetRepository assetRepository;
+    private final ExpenseRepository expenseRepository;
     private final UserLoggedInfo userLoggedInfo;
 
     @Override
@@ -63,10 +65,11 @@ public class AppUserService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteUserAndHisAssets() { // TODO: WRITE TEST FOR THIS METHOD
+    public void deleteUserAndAllHisData() { // TODO: WRITE TEST FOR THIS METHOD
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
         assetRepository.deleteAllByAppUser(loggedAppUser);
+        expenseRepository.deleteAllByAppUser(loggedAppUser);
         appUserRepository.delete(loggedAppUser);
     }
 }

@@ -2,20 +2,20 @@ package pl.java.homebudget.service.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AuthenticationRequest;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
+import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.AssetCategory;
+import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.UsernameAlreadyExistsException;
 import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
+import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.impl.AppUserService;
+import pl.java.homebudget.service.init.InitDataForIT;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -24,10 +24,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-@Transactional
-@WithMockUser(username = "user", password = "password")
-class AppUserServiceIT {
+
+class AppUserServiceIT extends InitDataForIT {
 
     @Autowired
     private AppUserRepository appUserRepository;
@@ -37,6 +35,9 @@ class AppUserServiceIT {
 
     @Autowired
     private AssetRepository assetRepository;
+
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
     private final static String BCRYPT_PREFIX = "$2a$10$";
     private final static String BCRYPT_REGEX = "^[$]2[abxy]?[$](?:0[4-9]|[12][0-9]|3[01])[$][./0-9a-zA-Z]{53}$";
@@ -100,37 +101,25 @@ class AppUserServiceIT {
     void shouldDeleteUserAndAllHIsAssets() {
         //given
         initDatabaseWithAssetsAndUser();
-        int assetRepositorySize = 4;
+
+        AppUser appUser = appUserRepository.findByUsername(USERNAME).get();
+
+        List<Asset> assets = assetRepository.findAllByAppUser(appUser);
+        List<Expense> expenses = expenseRepository.findAllByAppUser(appUser);
+
+        assertThat(assets).isNotEmpty();
+        assertThat(expenses).isNotEmpty();
 
         //when
-        List<Asset> assets = assetRepository.findAll();
-        assertThat(assets).hasSize(assetRepositorySize);
-
-        boolean existsByUsername = appUserRepository.existsByUsername(USERNAME);
-        assertThat(existsByUsername).isTrue();
-
-        appUserService.deleteUserAndHisAssets();
+        appUserService.deleteUserAndAllHisData();
 
         //then
-        boolean shouldNotExist = appUserRepository.existsByUsername(USERNAME);
-        assertThat(shouldNotExist).isFalse();
-
-        List<Asset> repositoryAll = assetRepository.findAll();
-
-        assertThat(repositoryAll).hasSize(1);
-
+        assertThat(appUserRepository.existsByUsername(USERNAME)).isFalse();
+        assertThat(assetRepository.findAllByAppUser(appUser)).isEmpty();
+        assertThat(expenseRepository.findAllByAppUser(appUser)).isEmpty();
 
     }
 
-    private AppUser initDatabaseWithUser() {
-        AppUser appUser = new AppUser(USERNAME, PASSWORD);
-        return appUserRepository.save(appUser);
-    }
-
-    private AppUser initDatabaseWithSecondUser() {
-        AppUser appUser = new AppUser("second", "second");
-        return appUserRepository.save(appUser);
-    }
 
     private void initDatabaseWithAssetsAndUser() {
         AppUser appUser = initDatabaseWithUser();
@@ -142,8 +131,18 @@ class AppUserServiceIT {
         assetRepository.save(asset2);
         assetRepository.save(asset3);
 
+        Expense expense = new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser);
+        Expense expense2 = new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser);
+        Expense expense3 = new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.OTHER, appUser);
+        expenseRepository.save(expense);
+        expenseRepository.save(expense2);
+        expenseRepository.save(expense3);
+
         AppUser secondUser = initDatabaseWithSecondUser();
         Asset asset4 = new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, secondUser);
         assetRepository.save(asset4);
+
+        Expense expense4 = new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.OTHER, secondUser);
+        expenseRepository.save(expense4);
     }
 }

@@ -3,9 +3,6 @@ package pl.java.homebudget.service.integration;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
@@ -14,7 +11,8 @@ import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
-import pl.java.homebudget.service.impl.AssetServiceImpl;
+import pl.java.homebudget.service.AssetService;
+import pl.java.homebudget.service.init.InitDataForIT;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -24,16 +22,14 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-@Transactional
-@WithMockUser(username = "username", password = "password")
-public class AssetServiceImplIT {
+
+public class AssetServiceImplIT extends InitDataForIT {
 
     @Autowired
     private AssetRepository assetRepository;
 
     @Autowired
-    private AssetServiceImpl assetService;
+    private AssetService assetService;
 
     @Autowired
     private AppUserRepository appUserRepository;
@@ -59,7 +55,7 @@ public class AssetServiceImplIT {
     @Test
     void shouldAddAsset() {
         //given
-        initFirstUser();
+        initDatabaseWithUser();
         AssetDto assetDto = new AssetDto(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
 
         //when
@@ -134,7 +130,7 @@ public class AssetServiceImplIT {
     @Test
     void shouldNotUpdateAsset_WhenItDoesNotExistById() {
         //given
-        initFirstUser();
+        initDatabaseWithUser();
         Long notExistsId = -52L;
         AssetDto assetDto = new AssetDto(notExistsId, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
 
@@ -162,40 +158,32 @@ public class AssetServiceImplIT {
     void shouldDeleteAllAssetsByAppUser() {
         //given
         initDatabase();
-        AppUser appUser = appUserRepository.findByUsername("username").get();
+        AppUser appUser = appUserRepository.findByUsername("user").get();
         //when
-        List<Asset> assetList = assetRepository.getAssetsByAppUser(appUser);
+        List<Asset> assetList = assetRepository.findAllByAppUser(appUser);
         assertThat(assetList).isNotEmpty();
 
         assetService.deleteAssetsByAppUser();
 
         //then
-        List<Asset> afterDeletion = assetRepository.getAssetsByAppUser(appUser);
+        List<Asset> afterDeletion = assetRepository.findAllByAppUser(appUser);
         assertThat(afterDeletion).isEmpty();
 
         List<Asset> allAssets = assetRepository.findAll();
         assertThat(allAssets).isNotEmpty();
     }
 
-    private AppUser initFirstUser() {
-        AppUser appUser = new AppUser("username", "password");
-        return appUserRepository.save(appUser);
-    }
 
-    private AppUser initSecondUser() {
-        AppUser appUser = new AppUser("secondUser", "secondPassword");
-        return appUserRepository.save(appUser);
-    }
 
     private void initDatabase() {
-        AppUser firstUser = initFirstUser();
+        AppUser firstUser = initDatabaseWithUser();
         List<Asset> assets = new ArrayList<>();
         assets.add(new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, firstUser));
         assets.add(new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.SALARY, firstUser));
         assets.add(new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.BONUS, firstUser));
         assets.add(new Asset(BigDecimal.valueOf(105L), Instant.now(), AssetCategory.BONUS, firstUser));
 
-        AppUser secondUser = initSecondUser();
+        AppUser secondUser = initDatabaseWithSecondUser();
         assets.add(new Asset(BigDecimal.valueOf(150L), Instant.now(), AssetCategory.BONUS, secondUser));
         assets.add(new Asset(BigDecimal.valueOf(300L), Instant.now(), AssetCategory.LOAN_RETURNED, secondUser));
 

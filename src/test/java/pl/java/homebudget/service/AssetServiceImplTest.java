@@ -52,7 +52,7 @@ class AssetServiceImplTest {
         assets.add(new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.SALARY, appUser));
         assets.add(new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.BONUS, appUser));
 
-        given(assetRepository.getAssetsByAppUser(any())).willReturn(assets);
+        given(assetRepository.findAllByAppUser(any())).willReturn(assets);
         given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
 
         //when
@@ -63,7 +63,7 @@ class AssetServiceImplTest {
                 .map(assetMapper::fromAssetToDto)
                 .collect(Collectors.toList());
 
-        then(assetRepository).should().getAssetsByAppUser(any());
+        then(assetRepository).should().findAllByAppUser(any());
         then(userLoggedInfo).should().getLoggedAppUser();
         assertThat(assetDtoList).hasSize(3);
         assertThat(assetDtoList).containsExactlyElementsOf(assetDtos);
@@ -111,6 +111,16 @@ class AssetServiceImplTest {
 
         //then
         then(assetRepository).should().deleteById(anyLong());
+    }
+
+    @Test
+    void shouldDeleteAssetsByAppUser() {
+        //given
+        //when
+        assetService.deleteAssetsByAppUser();
+
+        //then
+        then(assetRepository).should().deleteAllByAppUser(any());
     }
 
     @Test
@@ -164,7 +174,7 @@ class AssetServiceImplTest {
         //given
         AssetCategory assetCategory = AssetCategory.OTHER;
         AppUser appUser = new AppUser("user", "password");
-        given(assetRepository.getAssetEntitiesByCategoryAndAppUser(assetCategory, appUser)).willReturn(
+        given(assetRepository.findAllByCategoryAndAppUser(assetCategory, appUser)).willReturn(
                 List.of(
                         new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, appUser),
                         new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.OTHER, appUser),
@@ -178,6 +188,6 @@ class AssetServiceImplTest {
 
         //then
         assertThat(assetsByCategory).hasSize(3);
-        then(assetRepository).should().getAssetEntitiesByCategoryAndAppUser(assetCategory, appUser);
+        then(assetRepository).should().findAllByCategoryAndAppUser(assetCategory, appUser);
     }
 }

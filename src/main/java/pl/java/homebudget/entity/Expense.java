@@ -34,6 +34,13 @@ public class Expense {
     @ToString.Exclude
     private AppUser appUser;
 
+    public Expense(BigDecimal amount, Instant purchaseDate, ExpensesCategory category, AppUser appUser) {
+        this.amount = amount;
+        this.purchaseDate = purchaseDate;
+        this.category = category;
+        this.appUser = appUser;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

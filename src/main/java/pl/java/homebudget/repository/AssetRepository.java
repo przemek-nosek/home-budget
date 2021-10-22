@@ -11,9 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
-    List<Asset> getAssetEntitiesByCategoryAndAppUser(AssetCategory category, AppUser appUser);
+    List<Asset> findAllByCategoryAndAppUser(AssetCategory category, AppUser appUser);
 
-    List<Asset> getAssetsByAppUser(AppUser appUser);
+    List<Asset> findAllByAppUser(AppUser appUser);
 
     void deleteAllByAppUser(AppUser appUser);
 

@@ -49,11 +49,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Expense expense = expenseMapper.fromDtoToAsset(expenseDto, loggedAppUser);
 
-        expenseRepository.save(expense);
+        Expense savedExpense = expenseRepository.save(expense);
 
         log.info("Expense added");
 
-        return expenseMapper.fromAssetToDto(expense);
+        return expenseMapper.fromAssetToDto(savedExpense);
     }
 
     @Override

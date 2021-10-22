@@ -34,7 +34,7 @@ public class AssetServiceImpl implements AssetService {
 
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
-        return assetRepository.getAssetsByAppUser(loggedAppUser).stream()
+        return assetRepository.findAllByAppUser(loggedAppUser).stream()
                 .map(assetMapper::fromAssetToDto)
                 .collect(Collectors.toList());
     }
@@ -110,7 +110,7 @@ public class AssetServiceImpl implements AssetService {
         log.info("Getting Assets by category {}", assetCategory);
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
-        return assetRepository.getAssetEntitiesByCategoryAndAppUser(assetCategory, loggedAppUser)
+        return assetRepository.findAllByCategoryAndAppUser(assetCategory, loggedAppUser)
                 .stream()
                 .map(assetMapper::fromAssetToDto)
                 .collect(Collectors.toList());

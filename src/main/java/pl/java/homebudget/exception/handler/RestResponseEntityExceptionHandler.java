@@ -40,20 +40,21 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<ErrorMessage> handleConstraintViolationException(ConstraintViolationException ex) {
-        List<String> errors = new ArrayList<>();
 
-        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-
-        for (ConstraintViolation<?> constraintViolation : constraintViolations) {
-            errors.add(constraintViolation.getMessageTemplate());
-        }
-
-        ErrorMessage errorMessage = getErrorMessage(HttpStatus.BAD_REQUEST, CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE, errors);
-
-        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(ConstraintViolationException.class)
+//    protected ResponseEntity<ErrorMessage> handleConstraintViolationException(ConstraintViolationException ex) {
+//        List<String> errors = new ArrayList<>();
+//
+//        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+//
+//        for (ConstraintViolation<?> constraintViolation : constraintViolations) {
+//            errors.add(constraintViolation.getMessageTemplate());
+//        }
+//
+//        ErrorMessage errorMessage = getErrorMessage(HttpStatus.BAD_REQUEST, CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE, errors);
+//
+//        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+//    }
 
     @ExceptionHandler(AppUserInvalidUsernameOrPasswordException.class)
     protected ResponseEntity<ErrorMessage> handleAppUserInvalidUsernameOrPasswordException(AppUserInvalidUsernameOrPasswordException ex) {
@@ -78,7 +79,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             errors.put(fieldName, errorMessage);
         });
 
-        return new ResponseEntity<>(errors, HttpStatus.OK);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
 

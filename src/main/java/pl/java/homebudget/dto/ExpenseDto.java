@@ -18,10 +18,10 @@ public class ExpenseDto {
     private Long id;
 
     @NotNull(message = "Amount is null.")
-    @DecimalMin(value = "0.0", inclusive = false)
+    @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be higher than 0.00")
     private BigDecimal amount;
 
-    @NotNull(message = "Purchase date date is null.")
+    @NotNull(message = "Purchase date is null.")
     private Instant purchaseDate;
 
     @NotNull(message = "Category is null.")

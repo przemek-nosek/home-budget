@@ -8,16 +8,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import pl.java.homebudget.dto.AuthenticationRequest;
+import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.exception.UsernameAlreadyExistsException;
 import pl.java.homebudget.mapper.AppUserMapper;
 import pl.java.homebudget.repository.AppUserRepository;
+import pl.java.homebudget.repository.AssetRepository;
+import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.impl.AppUserService;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -29,7 +33,16 @@ class AppUserServiceTest {
     private AppUserRepository appUserRepository;
 
     @Mock
+    private AssetRepository assetRepository;
+
+    @Mock
+    private ExpenseRepository expenseRepository;
+
+    @Mock
     private AppUserMapper appUserMapper;
+
+    @Mock
+    private UserLoggedInfo userLoggedInfo;
 
     @InjectMocks
     private AppUserService appUserService;
@@ -90,5 +103,18 @@ class AppUserServiceTest {
         //when
         //then
         assertThrows(UsernameAlreadyExistsException.class, () -> appUserService.saveUser(authenticationRequest));
+    }
+
+    @Test
+    void shouldDeleteUserAndAllHisData() {
+        //given
+
+        //when
+        appUserService.deleteUserAndAllHisData();
+
+        //then
+        then(assetRepository).should().deleteAllByAppUser(any());
+        then(expenseRepository).should().deleteAllByAppUser(any());
+        then(appUserRepository).should().delete(any());
     }
 }
