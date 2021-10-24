@@ -16,9 +16,11 @@ import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.exception.ExpenseNotFoundException;
+import pl.java.homebudget.exception.InvalidDateFormatException;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.impl.ExpenseServiceImpl;
+import pl.java.homebudget.util.DateFormatValidator;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -190,10 +192,44 @@ class ExpenseServiceImplTest {
         //then
         assertThrows(AssetNotFoundException.class, () -> expenseService.updateExpense(expenseDto));
         then(expenseRepository).should().findByIdAndAppUser(anyLong(), any());
+    }
 
+    @Test
+    void shouldGetExpensesWithinDate() {
+        //given
+        AppUser appUser = getAppUser();
+        String fromDate = "2021-10-24";
+        String toDate = "2021-10-29";
+
+
+        List<Expense> expenseList = List.of(
+                new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser),
+                new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.EDUCATION, appUser),
+                new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser)
+        );
+
+        given(expenseRepository.findAllByPurchaseDateBetweenAndAppUser(any(), any(), any())).willReturn(expenseList);
+
+        //when
+        List<ExpenseDto> expensesWithinDate = expenseService.getExpensesWithinDate(fromDate, toDate);
+
+        //then
+        assertThat(expensesWithinDate).hasSize(3);
+        then(expenseRepository).should().findAllByPurchaseDateBetweenAndAppUser(any(), any(), any());
+    }
+
+    @Test
+    void shouldNotGetExpensesWithinDate_andThrowInvalidDateFormatException() {
+        //given
+        String invalidFromDate = "2021-10-2";
+        String toDate = "2021-10-29";
+
+        //when
+        //then
+        assertThrows(InvalidDateFormatException.class, () -> expenseService.getExpensesWithinDate(invalidFromDate, toDate));
     }
 
     private AppUser getAppUser() {
-        return new AppUser("login", "password");
+        return new AppUser("user", "password");
     }
 }

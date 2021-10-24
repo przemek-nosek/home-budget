@@ -9,27 +9,19 @@ import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.ExpenseNotFoundException;
 import pl.java.homebudget.mapper.ExpenseMapper;
-import pl.java.homebudget.repository.AppUserRepository;
-import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.ExpenseService;
 import pl.java.homebudget.service.init.InitDataForIT;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ExpenseServiceImplIT extends InitDataForIT {
-
-    @Autowired
-    private AppUserRepository appUserRepository;
-
-    @Autowired
-    private ExpenseRepository expenseRepository;
 
     @Autowired
     private ExpenseService expenseService;
@@ -39,7 +31,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @Test
     void shouldGetAllExpenses_AssociatedWithFirstUser() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndExpenses();
 
         //when
         List<ExpenseDto> expenses = expenseService.getExpenses();
@@ -69,7 +61,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @Test
     void shouldDeleteExpense() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndExpenses();
         List<Expense> expenses = expenseRepository.findAll();
         Expense expense = expenses.get(0);
         ExpenseDto expenseDto = expenseMapper.fromAssetToDto(expense);
@@ -86,7 +78,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @Test
     void shouldDeleteExpenseById() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndExpenses();
         List<Expense> expenses = expenseRepository.findAll();
         Expense expense = expenses.get(0);
 
@@ -113,7 +105,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @Test
     void shouldUpdateExpense() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndExpenses();
         Expense expense = expenseRepository.findAll().get(0);
 
         ExpenseDto expenseDto = new ExpenseDto(expense.getId(), BigDecimal.valueOf(51283L), Instant.now(), ExpensesCategory.OTHER);
@@ -141,7 +133,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @Test
     void shouldGetExpenseByCategory() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndExpenses();
         ExpensesCategory expensesCategory = ExpensesCategory.OTHER;
 
         //when
@@ -156,7 +148,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @Test
     void shouldDeleteAllExpensesByAppUser() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndExpenses();
         AppUser appUser = appUserRepository.findByUsername("user").get();
         //when
         List<Expense> expenses = expenseRepository.findAllByAppUser(appUser);
@@ -172,21 +164,35 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         assertThat(allAssets).isNotEmpty();
     }
 
+    @Test
+    void shouldGetExpensesWithinDate() {
+        //given
+        final String instantSuffix = "T00:00:00.000Z";
+        AppUser appUser = initDatabaseWithUser();
+        String firstDate = "2021-10-10";
+        String secondDate = "2021-10-15";
+        String thirdDate = "2021-10-20";
+        String outOfRangeDate = "2015-01-09";
+
+        initDatabaseWithExpenseAndUser(appUser, firstDate + instantSuffix);
+        initDatabaseWithExpenseAndUser(appUser, secondDate + instantSuffix);
+        initDatabaseWithExpenseAndUser(appUser, thirdDate + instantSuffix);
+        initDatabaseWithExpenseAndUser(appUser, outOfRangeDate + instantSuffix);
+
+        //when
+        List<ExpenseDto> expensesWithinDate = expenseService.getExpensesWithinDate(firstDate, thirdDate);
+
+        //then
+        assertThat(expensesWithinDate).hasSize(3);
+
+        List<String> datesWithinRange = expensesWithinDate.stream()
+                .map(expenseDto -> expenseDto.getPurchaseDate().toString().substring(0, firstDate.length()))
+                .collect(Collectors.toList());
+
+        assertThat(datesWithinRange).containsExactly(firstDate, secondDate, thirdDate);
+        assertThat(datesWithinRange).doesNotContain(outOfRangeDate);
 
 
-
-    private void initDatabase() {
-        AppUser firstUser = initDatabaseWithUser();
-        List<Expense> expenses = new ArrayList<>();
-        expenses.add(new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, firstUser));
-        expenses.add(new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.EDUCATION, firstUser));
-        expenses.add(new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, firstUser));
-        expenses.add(new Expense(BigDecimal.valueOf(105L), Instant.now(), ExpensesCategory.EDUCATION, firstUser));
-
-        AppUser secondUser = initDatabaseWithSecondUser();
-        expenses.add(new Expense(BigDecimal.valueOf(150L), Instant.now(), ExpensesCategory.EDUCATION, secondUser));
-        expenses.add(new Expense(BigDecimal.valueOf(300L), Instant.now(), ExpensesCategory.FOR_LIFE, secondUser));
-
-        expenseRepository.saveAll(expenses);
     }
+
 }

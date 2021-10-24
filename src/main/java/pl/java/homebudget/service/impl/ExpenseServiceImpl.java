@@ -11,10 +11,10 @@ import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.ExpenseNotFoundException;
+import pl.java.homebudget.exception.InvalidDateFormatException;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.ExpenseService;
-import pl.java.homebudget.exception.InvalidDateFormatException;
 import pl.java.homebudget.util.DateFormatValidator;
 
 import java.time.Instant;
@@ -137,15 +137,17 @@ public class ExpenseServiceImpl implements ExpenseService {
         log.info("getExpensesWithinDate");
         log.debug("from: {}, to: {}", from, to);
 
-        final String instantSuffix = "T23:59:59.999Z";
+        final String instantFromDateSuffix = "T00:00:00.000Z";
+        final String instantToDateSuffix = "T23:59:59.999Z";
 
-        if (!DateFormatValidator.isDate(from) || !DateFormatValidator.isDate(to)){
+        if (!DateFormatValidator.isDate(from) || !DateFormatValidator.isDate(to)) {
             log.info("Invalid date format: {} or {} is invalid", from, to);
             throw new InvalidDateFormatException("Provided date format is not supported! Supported date format: yyyy-MM-dd");
         }
 
-        Instant fromDate = Instant.parse(from + instantSuffix);
-        Instant toDate = Instant.parse(to + instantSuffix);
+        Instant fromDate = Instant.parse(from + instantFromDateSuffix);
+        Instant toDate = Instant.parse(to + instantToDateSuffix);
+        // TODO: isBefore throw new exception or?
 
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 

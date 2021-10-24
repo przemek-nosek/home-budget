@@ -9,6 +9,7 @@ import pl.java.homebudget.dto.AuthenticationRequest;
 import pl.java.homebudget.exception.AppUserInvalidUsernameOrPasswordException;
 import pl.java.homebudget.service.impl.AppUserService;
 import pl.java.homebudget.service.impl.AuthenticationService;
+import pl.java.homebudget.service.init.InitDataForIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,21 +17,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @Transactional
 @TestPropertySource("classpath:app.properties")
-public class AuthenticationServiceIT {
+public class AuthenticationServiceIT extends InitDataForIT {
 
-    private static final String USER = "user";
-    private static final String PASSWORD = "password";
     private static final String JWT_PREFIX = "eyJhbGciOiJIUzI1NiJ9";
+
     @Autowired
     private AuthenticationService authenticationService;
 
-    @Autowired
-    private AppUserService appUserService;
 
     @Test
     void shouldGetAuthenticationToken() {
         //given
-        AuthenticationRequest authenticationRequest = initDatabase();
+        AuthenticationRequest authenticationRequest = initDatabaseWithAuthenticationRequest();
 
         //when
         String authenticationToken = authenticationService.getAuthenticationToken(authenticationRequest);
@@ -42,7 +40,7 @@ public class AuthenticationServiceIT {
     @Test
     void shouldNotGetToken_whenUsernameIsInvalid() {
         //given
-        initDatabase();
+        initDatabaseWithAuthenticationRequest();
         AuthenticationRequest authenticationRequest = new AuthenticationRequest("invalid", PASSWORD);
 
         //when
@@ -53,17 +51,12 @@ public class AuthenticationServiceIT {
     @Test
     void shouldNotGetToken_whenPasswordIsInvalid() {
         //given
-        initDatabase();
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest(USER, "invalid");
+        initDatabaseWithAuthenticationRequest();
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest(USERNAME, "invalid");
 
         //when
         //then
         assertThrows(AppUserInvalidUsernameOrPasswordException.class, () -> authenticationService.getAuthenticationToken(authenticationRequest));
     }
 
-    private AuthenticationRequest initDatabase() {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest(USER, PASSWORD);
-        appUserService.saveUser(authenticationRequest);
-        return authenticationRequest;
-    }
 }

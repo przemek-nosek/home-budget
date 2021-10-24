@@ -9,14 +9,11 @@ import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.mapper.AssetMapper;
-import pl.java.homebudget.repository.AppUserRepository;
-import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.AssetService;
 import pl.java.homebudget.service.init.InitDataForIT;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,13 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AssetServiceImplIT extends InitDataForIT {
 
     @Autowired
-    private AssetRepository assetRepository;
-
-    @Autowired
     private AssetService assetService;
-
-    @Autowired
-    private AppUserRepository appUserRepository;
 
     private final AssetMapper assetMapper = Mappers.getMapper(AssetMapper.class);
 
@@ -40,7 +31,7 @@ public class AssetServiceImplIT extends InitDataForIT {
     @Test
     void shouldGetAllAssets_AssociatedWithFirstUser() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndAssets();
 
         //when
         List<AssetDto> assets = assetService.getAssets();
@@ -70,7 +61,7 @@ public class AssetServiceImplIT extends InitDataForIT {
     @Test
     void shouldDeleteAsset() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndAssets();
         List<Asset> assetList = assetRepository.findAll();
         Asset asset = assetList.get(0);
         AssetDto assetDto = assetMapper.fromAssetToDto(asset);
@@ -87,7 +78,7 @@ public class AssetServiceImplIT extends InitDataForIT {
     @Test
     void shouldDeleteAssetById() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndAssets();
         List<Asset> assetList = assetRepository.findAll();
         Asset asset = assetList.get(0);
 
@@ -114,7 +105,7 @@ public class AssetServiceImplIT extends InitDataForIT {
     @Test
     void shouldUpdateAsset() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndAssets();
         Asset asset = assetRepository.findAll().get(0);
 
         AssetDto assetDto = new AssetDto(asset.getId(), BigDecimal.valueOf(51283L), Instant.now(), AssetCategory.BONUS);
@@ -142,7 +133,7 @@ public class AssetServiceImplIT extends InitDataForIT {
     @Test
     void shouldGetAssetsByCategory() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndAssets();
         AssetCategory assetCategory = AssetCategory.OTHER;
 
         //when
@@ -157,7 +148,7 @@ public class AssetServiceImplIT extends InitDataForIT {
     @Test
     void shouldDeleteAllAssetsByAppUser() {
         //given
-        initDatabase();
+        initDatabaseWithTwoUsersAndAssets();
         AppUser appUser = appUserRepository.findByUsername("user").get();
         //when
         List<Asset> assetList = assetRepository.findAllByAppUser(appUser);
@@ -174,19 +165,4 @@ public class AssetServiceImplIT extends InitDataForIT {
     }
 
 
-
-    private void initDatabase() {
-        AppUser firstUser = initDatabaseWithUser();
-        List<Asset> assets = new ArrayList<>();
-        assets.add(new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, firstUser));
-        assets.add(new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.SALARY, firstUser));
-        assets.add(new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.BONUS, firstUser));
-        assets.add(new Asset(BigDecimal.valueOf(105L), Instant.now(), AssetCategory.BONUS, firstUser));
-
-        AppUser secondUser = initDatabaseWithSecondUser();
-        assets.add(new Asset(BigDecimal.valueOf(150L), Instant.now(), AssetCategory.BONUS, secondUser));
-        assets.add(new Asset(BigDecimal.valueOf(300L), Instant.now(), AssetCategory.LOAN_RETURNED, secondUser));
-
-        assetRepository.saveAll(assets);
-    }
 }
