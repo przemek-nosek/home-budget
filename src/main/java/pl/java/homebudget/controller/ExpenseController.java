@@ -10,6 +10,8 @@ import pl.java.homebudget.service.ExpenseService;
 
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -31,6 +33,18 @@ public class ExpenseController {
         ExpensesCategory expensesCategory = ExpensesCategory.valueOf(category.toUpperCase());
 
         List<ExpenseDto> expenseDtoList = expenseService.getExpensesByCategory(expensesCategory);
+
+        return new ResponseEntity<>(expenseDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<ExpenseDto>> getExpensesWithinDate(@RequestParam(name = "from") String fromDate,
+                                                                  @RequestParam(name = "to", required = false) String toDate) {
+        if (toDate == null) {
+            toDate = LocalDate.now().toString();
+        }
+
+        List<ExpenseDto> expenseDtoList = expenseService.getExpensesWithinDate(fromDate, toDate);
 
         return new ResponseEntity<>(expenseDtoList, HttpStatus.OK);
     }

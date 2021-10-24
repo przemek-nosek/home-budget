@@ -65,7 +65,7 @@ public class AppUserService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteUserAndAllHisData() { // TODO: WRITE TEST FOR THIS METHOD
+    public void deleteUserAndAllHisData() {
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
         assetRepository.deleteAllByAppUser(loggedAppUser);

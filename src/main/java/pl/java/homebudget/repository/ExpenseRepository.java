@@ -6,6 +6,7 @@ import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.ExpensesCategory;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +19,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     void deleteAllByAppUser(AppUser appUser);
 
     Optional<Expense> findByIdAndAppUser(Long id, AppUser appUser);
+
+    List<Expense> findAllByPurchaseDateBetweenAndAppUser(Instant from, Instant to, AppUser appUser);
 }

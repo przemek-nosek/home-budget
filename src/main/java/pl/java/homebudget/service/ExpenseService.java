@@ -19,4 +19,6 @@ public interface ExpenseService {
     void deleteExpensesByAppUser();
 
     ExpenseDto updateExpense(ExpenseDto expenseDto);
+
+    List<ExpenseDto> getExpensesWithinDate(String from, String to);
 }

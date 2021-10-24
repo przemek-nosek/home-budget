@@ -6,14 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import pl.java.homebudget.exception.AppUserInvalidUsernameOrPasswordException;
-import pl.java.homebudget.exception.AssetNotFoundException;
-import pl.java.homebudget.exception.ExpenseNotFoundException;
-import pl.java.homebudget.exception.UsernameAlreadyExistsException;
+import pl.java.homebudget.exception.*;
 import pl.java.homebudget.exception.dto.ErrorMessage;
 
 import java.time.LocalDateTime;
@@ -25,7 +23,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final String CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE = "Validation failed.";
+//    private static final String CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE = "Validation failed.";
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorMessage> handleGenericException(Exception ex) {
@@ -69,6 +67,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         ErrorMessage errorMessage = getErrorMessage(HttpStatus.CONFLICT, ex.getMessage(), Collections.emptyList());
 
         return new ResponseEntity<>(errorMessage, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidDateFormatException.class)
+    protected ResponseEntity<ErrorMessage> handleInvalidDateFormatException(InvalidDateFormatException ex) {
+        ErrorMessage errorMessage = getErrorMessage(HttpStatus.BAD_REQUEST, ex.getMessage(), Collections.emptyList());
+
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorMessage errorMessage = getErrorMessage(status, ex.getMessage(), Collections.emptyList());
+
+        return new ResponseEntity<>(errorMessage, headers, status);
     }
 
     @Override
