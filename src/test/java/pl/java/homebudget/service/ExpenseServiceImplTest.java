@@ -194,40 +194,40 @@ class ExpenseServiceImplTest {
         then(expenseRepository).should().findByIdAndAppUser(anyLong(), any());
     }
 
-    @Test
-    void shouldGetExpensesWithinDate() {
-        //given
-        AppUser appUser = getAppUser();
-        String fromDate = "2021-10-24";
-        String toDate = "2021-10-29";
-
-
-        List<Expense> expenseList = List.of(
-                new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser),
-                new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.EDUCATION, appUser),
-                new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser)
-        );
-
-        given(expenseRepository.findAllByPurchaseDateBetweenAndAppUser(any(), any(), any())).willReturn(expenseList);
-
-        //when
-        List<ExpenseDto> expensesWithinDate = expenseService.getExpensesWithinDate(fromDate, toDate);
-
-        //then
-        assertThat(expensesWithinDate).hasSize(3);
-        then(expenseRepository).should().findAllByPurchaseDateBetweenAndAppUser(any(), any(), any());
-    }
-
-    @Test
-    void shouldNotGetExpensesWithinDate_andThrowInvalidDateFormatException() {
-        //given
-        String invalidFromDate = "2021-10-2";
-        String toDate = "2021-10-29";
-
-        //when
-        //then
-        assertThrows(InvalidDateFormatException.class, () -> expenseService.getExpensesWithinDate(invalidFromDate, toDate));
-    }
+//    @Test
+//    void shouldGetExpensesWithinDate() {
+//        //given
+//        AppUser appUser = getAppUser();
+//        String fromDate = "2021-10-24";
+//        String toDate = "2021-10-29";
+//
+//
+//        List<Expense> expenseList = List.of(
+//                new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser),
+//                new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.EDUCATION, appUser),
+//                new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser)
+//        );
+//
+//        given(expenseRepository.findAllByPurchaseDateBetweenAndAppUser(any(), any(), any())).willReturn(expenseList);
+//
+//        //when
+//        List<ExpenseDto> expensesWithinDate = expenseService.getExpensesWithinDate(fromDate, toDate);
+//
+//        //then
+//        assertThat(expensesWithinDate).hasSize(3);
+//        then(expenseRepository).should().findAllByPurchaseDateBetweenAndAppUser(any(), any(), any());
+//    }
+//
+//    @Test
+//    void shouldNotGetExpensesWithinDate_andThrowInvalidDateFormatException() {
+//        //given
+//        String invalidFromDate = "2021-10-2";
+//        String toDate = "2021-10-29";
+//
+//        //when
+//        //then
+//        assertThrows(InvalidDateFormatException.class, () -> expenseService.getExpensesWithinDate(invalidFromDate, toDate));
+//    }
 
     private AppUser getAppUser() {
         return new AppUser("user", "password");

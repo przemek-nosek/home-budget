@@ -164,35 +164,33 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         assertThat(allAssets).isNotEmpty();
     }
 
-    @Test
-    void shouldGetExpensesWithinDate() {
-        //given
-        final String instantSuffix = "T00:00:00.000Z";
-        AppUser appUser = initDatabaseWithUser();
-        String firstDate = "2021-10-10";
-        String secondDate = "2021-10-15";
-        String thirdDate = "2021-10-20";
-        String outOfRangeDate = "2015-01-09";
-
-        initDatabaseWithExpenseAndUser(appUser, firstDate + instantSuffix);
-        initDatabaseWithExpenseAndUser(appUser, secondDate + instantSuffix);
-        initDatabaseWithExpenseAndUser(appUser, thirdDate + instantSuffix);
-        initDatabaseWithExpenseAndUser(appUser, outOfRangeDate + instantSuffix);
-
-        //when
-        List<ExpenseDto> expensesWithinDate = expenseService.getExpensesWithinDate(firstDate, thirdDate);
-
-        //then
-        assertThat(expensesWithinDate).hasSize(3);
-
-        List<String> datesWithinRange = expensesWithinDate.stream()
-                .map(expenseDto -> expenseDto.getPurchaseDate().toString().substring(0, firstDate.length()))
-                .collect(Collectors.toList());
-
-        assertThat(datesWithinRange).containsExactly(firstDate, secondDate, thirdDate);
-        assertThat(datesWithinRange).doesNotContain(outOfRangeDate);
-
-
-    }
+//    @Test
+//    void shouldGetExpensesWithinDate() {
+//        //given
+//        final String instantSuffix = "T00:00:00.000Z";
+//        AppUser appUser = initDatabaseWithUser();
+//        String firstDate = "2021-10-10";
+//        String secondDate = "2021-10-15";
+//        String thirdDate = "2021-10-20";
+//        String outOfRangeDate = "2015-01-09";
+//
+//        initDatabaseWithExpenseAndUser(appUser, firstDate + instantSuffix);
+//        initDatabaseWithExpenseAndUser(appUser, secondDate + instantSuffix);
+//        initDatabaseWithExpenseAndUser(appUser, thirdDate + instantSuffix);
+//        initDatabaseWithExpenseAndUser(appUser, outOfRangeDate + instantSuffix);
+//
+//        //when
+//        List<ExpenseDto> expensesWithinDate = expenseService.getExpensesWithinDate(firstDate, thirdDate);
+//
+//        //then
+//        assertThat(expensesWithinDate).hasSize(3);
+//
+//        List<String> datesWithinRange = expensesWithinDate.stream()
+//                .map(expenseDto -> expenseDto.getPurchaseDate().toString().substring(0, firstDate.length()))
+//                .collect(Collectors.toList());
+//
+//        assertThat(datesWithinRange).containsExactly(firstDate, secondDate, thirdDate);
+//        assertThat(datesWithinRange).doesNotContain(outOfRangeDate);
+//    }
 
 }

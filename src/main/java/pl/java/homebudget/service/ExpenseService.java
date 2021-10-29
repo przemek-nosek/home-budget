@@ -4,6 +4,7 @@ import pl.java.homebudget.dto.ExpenseDto;
 import pl.java.homebudget.enums.ExpensesCategory;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExpenseService {
     List<ExpenseDto> getExpenses();
@@ -20,5 +21,5 @@ public interface ExpenseService {
 
     ExpenseDto updateExpense(ExpenseDto expenseDto);
 
-    List<ExpenseDto> getExpensesWithinDate(String from, String to);
+    List<ExpenseDto> getFilteredExpenses(Map<String, String> filters);
 }
