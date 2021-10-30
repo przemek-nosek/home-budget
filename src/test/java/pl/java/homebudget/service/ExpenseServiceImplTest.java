@@ -5,29 +5,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.dto.ExpenseDto;
 import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
-import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.entity.Expense;
-import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.exception.ExpenseNotFoundException;
 import pl.java.homebudget.exception.InvalidDateFormatException;
 import pl.java.homebudget.exception.MissingExpenseFilterSettingException;
+import pl.java.homebudget.filter.FilterRange;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.impl.ExpenseServiceImpl;
-import pl.java.homebudget.util.DateFormatValidator;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class ExpenseServiceImplTest {
@@ -54,6 +52,9 @@ class ExpenseServiceImplTest {
 
     @Mock
     private ExpenseMapper expenseMapper;
+
+    @Mock
+    private FilterRange expenseFilterRange;
 
     @Test
     void shouldGetAllExpenses() {
@@ -204,6 +205,8 @@ class ExpenseServiceImplTest {
     @MethodSource(value = "getFilters")
     void shouldGetFilteredExpenses_byFilters(String firstFilter, String secondFilter, Map<String, String> filters) {
         //given
+        Instant now = Instant.now();
+        Instant later = Instant.now().plus(60L, ChronoUnit.SECONDS);
 
         AppUser appUser = getAppUser();
         List<Expense> expenseList = List.of(
@@ -211,7 +214,8 @@ class ExpenseServiceImplTest {
                 new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.EDUCATION, appUser),
                 new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser)
         );
-        given(expenseRepository.findAllByPurchaseDateBetweenAndAppUser(any(), any(), any())).willReturn(expenseList);
+        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(expenseFilterRange.getAllByFilter(appUser, filters)).willReturn(expenseList);
 
         //when
         List<ExpenseDto> filteredExpenses = expenseService.getFilteredExpenses(filters);
@@ -219,27 +223,21 @@ class ExpenseServiceImplTest {
 
         //then
         assertThat(filteredExpenses).hasSize(3);
-        then(expenseRepository).should().findAllByPurchaseDateBetweenAndAppUser(any(), any(), any());
     }
 
-    @Test
-    void shouldNotGetFilteredExpenses_andThrowInvalidDateFormatException() {
-        //given
-        Map<String, String> filters = Map.of("from", "2021-10-01", "to", "2021-10-3");
-
-        //when
-        //then
-        assertThrows(InvalidDateFormatException.class, () -> expenseService.getFilteredExpenses(filters));
-    }
 
     @ParameterizedTest(name = "existing filter: {0}, missing filter: {1}")
     @MethodSource(value = "getFiltersWithOneMissingFilter")
     void shouldNotGetFilteredExpenses_andThrowMissingExpenseFilterSettingException(String existingFilter, String missingFilter, Map<String, String> filters) {
         //given
+        AppUser appUser = getAppUser();
+        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        doThrow(new MissingExpenseFilterSettingException("Missing filter setting: " + missingFilter)).when(expenseFilterRange).getAllByFilter(appUser, filters);
+
         //when
-        //then
         MissingExpenseFilterSettingException ex = assertThrows(MissingExpenseFilterSettingException.class, () -> expenseService.getFilteredExpenses(filters));
 
+        //then
         assertThat(ex.getMessage()).isEqualTo("Missing filter setting: " + missingFilter);
     }
 

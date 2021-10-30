@@ -14,6 +14,7 @@ import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.AssetService;
+import pl.java.homebudget.validator.FilterParameterValidator;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,7 @@ public class AssetServiceImpl implements AssetService {
     private final AssetRepository assetRepository;
     private final AssetMapper assetMapper = Mappers.getMapper(AssetMapper.class);
     private final UserLoggedInfo userLoggedInfo;
+    private final FilterParameterValidator assetFilterParameterValidator;
 
     @Override
     public List<AssetDto> getAssets() {

@@ -189,10 +189,12 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @MethodSource(value = "getFiltersWithOneMissingFilter")
     void shouldNotGetFilteredExpenses_andThrowMissingExpenseFilterSettingException(String existingFilter, String missingFilter, Map<String, String> filters) {
         //given
+        initDatabaseWithFirstUser();
+
         //when
-        //then
         MissingExpenseFilterSettingException ex = assertThrows(MissingExpenseFilterSettingException.class, () -> expenseService.getFilteredExpenses(filters));
 
+        //then
         assertThat(ex.getMessage()).isEqualTo("Missing filter setting: " + missingFilter);
     }
 

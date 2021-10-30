@@ -1,4 +1,4 @@
-package pl.java.homebudget.util;
+package pl.java.homebudget.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.GenericValidator;
