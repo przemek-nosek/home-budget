@@ -14,6 +14,7 @@ import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.enums.Month;
 import pl.java.homebudget.exception.ExpenseNotFoundException;
 import pl.java.homebudget.exception.InvalidDateFormatException;
+import pl.java.homebudget.exception.MissingExpenseFilterSettingException;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.ExpenseService;
@@ -137,6 +138,61 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseMapper.fromAssetToDto(expense);
     }
 
+    @Override
+    public List<ExpenseDto> getFilteredExpenses(Map<String, String> filters) {
+        log.info("getFilteredExpenses");
+        log.debug("filters {}", filters);
+
+        if (containsFromAndToFilters(filters)) {
+            log.info("Filter parameters: FROM_DATE, TO_DATE");
+
+            String from = filters.get(ExpenseFilterSetting.FROM_DATE.getSetting());
+            String to = filters.get(ExpenseFilterSetting.TO_DATE.getSetting());
+
+            return getExpensesWithinDate(from, to);
+
+        } else if (containsMonthAndYearFilters(filters)) {
+            log.info("Filter parameters: MONTH, YEAR");
+
+            String year = filters.get(ExpenseFilterSetting.YEAR.getSetting());
+            String month = filters.get(ExpenseFilterSetting.MONTH.getSetting()).toUpperCase();
+
+            String from = Month.valueOf(month).getFirstDayForMonthInYear(year);
+            String to = Month.valueOf(month).getLastDayForMonthInYear(year, Year.isLeap(Integer.parseInt(year)));
+
+            return getExpensesWithinDate(from, to);
+        }
+
+        return Collections.emptyList();
+    }
+
+    private boolean containsMonthAndYearFilters(Map<String, String> filters) {
+        if (!filters.containsKey(ExpenseFilterSetting.MONTH.getSetting()) &&
+                filters.containsKey(ExpenseFilterSetting.YEAR.getSetting())) {
+            throw new MissingExpenseFilterSettingException("Missing filter setting: month");
+
+        } else if (filters.containsKey(ExpenseFilterSetting.MONTH.getSetting()) &&
+                !filters.containsKey(ExpenseFilterSetting.YEAR.getSetting())) {
+            throw new MissingExpenseFilterSettingException("Missing filter setting: year");
+        }
+
+        return filters.containsKey(ExpenseFilterSetting.MONTH.getSetting()) &&
+                filters.containsKey(ExpenseFilterSetting.YEAR.getSetting());
+    }
+
+    private boolean containsFromAndToFilters(Map<String, String> filters) {
+        if (!filters.containsKey(ExpenseFilterSetting.FROM_DATE.getSetting()) &&
+                filters.containsKey(ExpenseFilterSetting.TO_DATE.getSetting())) {
+            throw new MissingExpenseFilterSettingException("Missing filter setting: from");
+
+        } else if (filters.containsKey(ExpenseFilterSetting.FROM_DATE.getSetting()) &&
+                !filters.containsKey(ExpenseFilterSetting.TO_DATE.getSetting())) {
+            throw new MissingExpenseFilterSettingException("Missing filter setting: to");
+        }
+
+        return filters.containsKey(ExpenseFilterSetting.FROM_DATE.getSetting()) &&
+                filters.containsKey(ExpenseFilterSetting.TO_DATE.getSetting());
+    }
 
     private List<ExpenseDto> getExpensesWithinDate(String from, String to) {
         log.info("getExpensesWithinDate");
@@ -160,35 +216,5 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .stream()
                 .map(expenseMapper::fromAssetToDto)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ExpenseDto> getFilteredExpenses(Map<String, String> filters) {
-        log.info("getFilteredExpenses");
-        log.debug("filters {}", filters);
-
-        if (filters.containsKey(ExpenseFilterSetting.FROM_DATE.getSetting()) &&
-                filters.containsKey(ExpenseFilterSetting.TO_DATE.getSetting())) {
-            log.info("Filter parameters: FROM_DATE, TO_DATE");
-
-            String from = filters.get(ExpenseFilterSetting.FROM_DATE.getSetting());
-            String to = filters.get(ExpenseFilterSetting.TO_DATE.getSetting());
-
-            return getExpensesWithinDate(from, to);
-
-        } else if (filters.containsKey(ExpenseFilterSetting.MONTH.getSetting()) &&
-                filters.containsKey(ExpenseFilterSetting.YEAR.getSetting())) {
-            log.info("Filter parameters: MONTH, YEAR");
-
-            String year = filters.get(ExpenseFilterSetting.YEAR.getSetting());
-            String month = filters.get(ExpenseFilterSetting.MONTH.getSetting()).toUpperCase();
-
-            String from = Month.valueOf(month).getFirstDayForMonthInYear(year);
-            String to = Month.valueOf(month).getLastDayForMonthInYear(year, Year.isLeap(Integer.parseInt(year)));
-
-            return getExpensesWithinDate(from, to);
-        }
-
-        return Collections.emptyList();
     }
 }

@@ -76,6 +76,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(MissingExpenseFilterSettingException.class)
+    protected ResponseEntity<ErrorMessage> handleMissingExpenseFilterSettingException(MissingExpenseFilterSettingException ex) {
+        ErrorMessage errorMessage = getErrorMessage(HttpStatus.BAD_REQUEST, ex.getMessage(), Collections.emptyList());
+
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorMessage errorMessage = getErrorMessage(status, ex.getMessage(), Collections.emptyList());
