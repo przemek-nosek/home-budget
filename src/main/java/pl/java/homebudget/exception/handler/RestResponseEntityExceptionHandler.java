@@ -23,8 +23,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    private static final String CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE = "Validation failed.";
-
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorMessage> handleGenericException(Exception ex) {
         ErrorMessage errorMessage = getErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), Collections.emptyList());
@@ -38,22 +36,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
-
-
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    protected ResponseEntity<ErrorMessage> handleConstraintViolationException(ConstraintViolationException ex) {
-//        List<String> errors = new ArrayList<>();
-//
-//        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-//
-//        for (ConstraintViolation<?> constraintViolation : constraintViolations) {
-//            errors.add(constraintViolation.getMessageTemplate());
-//        }
-//
-//        ErrorMessage errorMessage = getErrorMessage(HttpStatus.BAD_REQUEST, CONSTRAINT_VALIDATION_EXCEPTION_MESSAGE, errors);
-//
-//        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
-//    }
 
     @ExceptionHandler(AppUserInvalidUsernameOrPasswordException.class)
     protected ResponseEntity<ErrorMessage> handleAppUserInvalidUsernameOrPasswordException(AppUserInvalidUsernameOrPasswordException ex) {

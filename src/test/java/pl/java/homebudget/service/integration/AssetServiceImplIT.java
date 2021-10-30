@@ -46,7 +46,7 @@ public class AssetServiceImplIT extends InitDataForIT {
     @Test
     void shouldAddAsset() {
         //given
-        initDatabaseWithUser();
+        initDatabaseWithFirstUser();
         AssetDto assetDto = new AssetDto(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
 
         //when
@@ -121,7 +121,7 @@ public class AssetServiceImplIT extends InitDataForIT {
     @Test
     void shouldNotUpdateAsset_WhenItDoesNotExistById() {
         //given
-        initDatabaseWithUser();
+        initDatabaseWithFirstUser();
         Long notExistsId = -52L;
         AssetDto assetDto = new AssetDto(notExistsId, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
 

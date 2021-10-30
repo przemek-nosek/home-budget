@@ -2,6 +2,9 @@ package pl.java.homebudget.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,6 +20,7 @@ import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.exception.ExpenseNotFoundException;
 import pl.java.homebudget.exception.InvalidDateFormatException;
+import pl.java.homebudget.exception.MissingExpenseFilterSettingException;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.impl.ExpenseServiceImpl;
@@ -25,7 +29,9 @@ import pl.java.homebudget.util.DateFormatValidator;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -194,40 +200,62 @@ class ExpenseServiceImplTest {
         then(expenseRepository).should().findByIdAndAppUser(anyLong(), any());
     }
 
-//    @Test
-//    void shouldGetExpensesWithinDate() {
-//        //given
-//        AppUser appUser = getAppUser();
-//        String fromDate = "2021-10-24";
-//        String toDate = "2021-10-29";
-//
-//
-//        List<Expense> expenseList = List.of(
-//                new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser),
-//                new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.EDUCATION, appUser),
-//                new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser)
-//        );
-//
-//        given(expenseRepository.findAllByPurchaseDateBetweenAndAppUser(any(), any(), any())).willReturn(expenseList);
-//
-//        //when
-//        List<ExpenseDto> expensesWithinDate = expenseService.getExpensesWithinDate(fromDate, toDate);
-//
-//        //then
-//        assertThat(expensesWithinDate).hasSize(3);
-//        then(expenseRepository).should().findAllByPurchaseDateBetweenAndAppUser(any(), any(), any());
-//    }
-//
-//    @Test
-//    void shouldNotGetExpensesWithinDate_andThrowInvalidDateFormatException() {
-//        //given
-//        String invalidFromDate = "2021-10-2";
-//        String toDate = "2021-10-29";
-//
-//        //when
-//        //then
-//        assertThrows(InvalidDateFormatException.class, () -> expenseService.getExpensesWithinDate(invalidFromDate, toDate));
-//    }
+    @ParameterizedTest(name = "Filters: {0} and {1}")
+    @MethodSource(value = "getFilters")
+    void shouldGetFilteredExpenses_byFilters(String firstFilter, String secondFilter, Map<String, String> filters) {
+        //given
+
+        AppUser appUser = getAppUser();
+        List<Expense> expenseList = List.of(
+                new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser),
+                new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.EDUCATION, appUser),
+                new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser)
+        );
+        given(expenseRepository.findAllByPurchaseDateBetweenAndAppUser(any(), any(), any())).willReturn(expenseList);
+
+        //when
+        List<ExpenseDto> filteredExpenses = expenseService.getFilteredExpenses(filters);
+
+
+        //then
+        assertThat(filteredExpenses).hasSize(3);
+        then(expenseRepository).should().findAllByPurchaseDateBetweenAndAppUser(any(), any(), any());
+    }
+
+    @Test
+    void shouldNotGetFilteredExpenses_andThrowInvalidDateFormatException() {
+        //given
+        Map<String, String> filters = Map.of("from", "2021-10-01", "to", "2021-10-3");
+
+        //when
+        //then
+        assertThrows(InvalidDateFormatException.class, () -> expenseService.getFilteredExpenses(filters));
+    }
+
+    @ParameterizedTest(name = "existing filter: {0}, missing filter: {1}")
+    @MethodSource(value = "getFiltersWithOneMissingFilter")
+    void shouldNotGetFilteredExpenses_andThrowMissingExpenseFilterSettingException(String existingFilter, String missingFilter, Map<String, String> filters) {
+        //given
+        //when
+        //then
+        MissingExpenseFilterSettingException ex = assertThrows(MissingExpenseFilterSettingException.class, () -> expenseService.getFilteredExpenses(filters));
+
+        assertThat(ex.getMessage()).isEqualTo("Missing filter setting: " + missingFilter);
+    }
+
+    private static Stream<Arguments> getFiltersWithOneMissingFilter() {
+        return Stream.of(
+                Arguments.of("from", "to", Map.of("from", "2021-10-01", "missingTo", "2021-10-30")),
+                Arguments.of("to", "from", Map.of("missingFrom", "2021-10-01", "to", "2021-10-30")),
+                Arguments.of("month", "year", Map.of("month", "october", "missingYear", "2021")),
+                Arguments.of("year", "month", Map.of("missingMonth", "october", "year", "2021")));
+    }
+
+    private static Stream<Arguments> getFilters() {
+        return Stream.of(
+          Arguments.of("from", "to", Map.of("from", "2021-10-01", "to", "2021-10-30")),
+          Arguments.of("month", "year", Map.of("month", "october", "year", "2021")));
+    }
 
     private AppUser getAppUser() {
         return new AppUser("user", "password");

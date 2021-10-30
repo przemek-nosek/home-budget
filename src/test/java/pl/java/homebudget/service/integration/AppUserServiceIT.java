@@ -24,7 +24,7 @@ class AppUserServiceIT extends InitDataForIT {
     @Test
     void shouldLoadUserByUsername() {
         //given
-        initDatabaseWithUser();
+        initDatabaseWithFirstUser();
 
         //when
         UserDetails userDetails = appUserService.loadUserByUsername(USERNAME);
@@ -65,7 +65,7 @@ class AppUserServiceIT extends InitDataForIT {
     @Test
     void shouldNotSaveUser_andThrowUsernameAlreadyExistsException() {
         //given
-        initDatabaseWithUser();
+        initDatabaseWithFirstUser();
         AuthenticationRequest authenticationRequest = new AuthenticationRequest(USERNAME, PASSWORD);
 
         //when

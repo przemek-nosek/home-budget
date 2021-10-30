@@ -1,6 +1,9 @@
 package pl.java.homebudget.service.integration;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.java.homebudget.dto.ExpenseDto;
@@ -8,6 +11,7 @@ import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.ExpenseNotFoundException;
+import pl.java.homebudget.exception.MissingExpenseFilterSettingException;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.service.ExpenseService;
 import pl.java.homebudget.service.init.InitDataForIT;
@@ -15,7 +19,8 @@ import pl.java.homebudget.service.init.InitDataForIT;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,7 +51,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @Test
     void shouldAddExpense() {
         //given
-        initDatabaseWithUser();
+        initDatabaseWithFirstUser();
         ExpenseDto expenseDto = new ExpenseDto(1L, BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER);
 
         //when
@@ -96,7 +101,6 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         //given
         Long notExistsId = -52L;
 
-
         //when
         //then
         assertThrows(ExpenseNotFoundException.class, () -> expenseService.deleteExpenseById(notExistsId));
@@ -121,7 +125,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     @Test
     void shouldNotUpdateExpense_WhenItDoesNotExistById() {
         //given
-        initDatabaseWithUser();
+        initDatabaseWithFirstUser();
         Long notExistsId = -52L;
         ExpenseDto expenseDto = new ExpenseDto(notExistsId, BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER);
 
@@ -164,33 +168,45 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         assertThat(allAssets).isNotEmpty();
     }
 
-//    @Test
-//    void shouldGetExpensesWithinDate() {
-//        //given
-//        final String instantSuffix = "T00:00:00.000Z";
-//        AppUser appUser = initDatabaseWithUser();
-//        String firstDate = "2021-10-10";
-//        String secondDate = "2021-10-15";
-//        String thirdDate = "2021-10-20";
-//        String outOfRangeDate = "2015-01-09";
-//
-//        initDatabaseWithExpenseAndUser(appUser, firstDate + instantSuffix);
-//        initDatabaseWithExpenseAndUser(appUser, secondDate + instantSuffix);
-//        initDatabaseWithExpenseAndUser(appUser, thirdDate + instantSuffix);
-//        initDatabaseWithExpenseAndUser(appUser, outOfRangeDate + instantSuffix);
-//
-//        //when
-//        List<ExpenseDto> expensesWithinDate = expenseService.getExpensesWithinDate(firstDate, thirdDate);
-//
-//        //then
-//        assertThat(expensesWithinDate).hasSize(3);
-//
-//        List<String> datesWithinRange = expensesWithinDate.stream()
-//                .map(expenseDto -> expenseDto.getPurchaseDate().toString().substring(0, firstDate.length()))
-//                .collect(Collectors.toList());
-//
-//        assertThat(datesWithinRange).containsExactly(firstDate, secondDate, thirdDate);
-//        assertThat(datesWithinRange).doesNotContain(outOfRangeDate);
-//    }
+    @ParameterizedTest(name = "Filters: {0} and {1}")
+    @MethodSource(value = "getFilters")
+    void shouldGetFilteredExpenses(String firstFilter, String secondFilter, Map<String, String> filters) {
+        //given
+        AppUser appUser = initDatabaseWithFirstUser();
+        initDatabaseWithExpenseAndUser(appUser, "2021-10-01");
+        initDatabaseWithExpenseAndUser(appUser, "2021-10-10");
+        initDatabaseWithExpenseAndUser(appUser, "2021-10-30");
+        initDatabaseWithExpenseAndUser(appUser, "2021-11-01");
 
+        //when
+        List<ExpenseDto> filteredExpenses = expenseService.getFilteredExpenses(filters);
+
+        //then
+        assertThat(filteredExpenses).hasSize(3);
+    }
+
+    @ParameterizedTest(name = "existing filter: {0}, missing filter: {1}")
+    @MethodSource(value = "getFiltersWithOneMissingFilter")
+    void shouldNotGetFilteredExpenses_andThrowMissingExpenseFilterSettingException(String existingFilter, String missingFilter, Map<String, String> filters) {
+        //given
+        //when
+        //then
+        MissingExpenseFilterSettingException ex = assertThrows(MissingExpenseFilterSettingException.class, () -> expenseService.getFilteredExpenses(filters));
+
+        assertThat(ex.getMessage()).isEqualTo("Missing filter setting: " + missingFilter);
+    }
+
+    private static Stream<Arguments> getFiltersWithOneMissingFilter() {
+        return Stream.of(
+                Arguments.of("from", "to", Map.of("from", "2021-10-01", "missingTo", "2021-10-30")),
+                Arguments.of("to", "from", Map.of("missingFrom", "2021-10-01", "to", "2021-10-30")),
+                Arguments.of("month", "year", Map.of("month", "october", "missingYear", "2021")),
+                Arguments.of("year", "month", Map.of("missingMonth", "october", "year", "2021")));
+    }
+
+    private static Stream<Arguments> getFilters() {
+        return Stream.of(
+                Arguments.of("from", "to", Map.of("from", "2021-10-01", "to", "2021-10-30")),
+                Arguments.of("month", "year", Map.of("month", "october", "year", "2021")));
+    }
 }

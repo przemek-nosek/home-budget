@@ -40,7 +40,7 @@ public abstract class InitDataForIT {
     protected final static String USERNAME = "user";
     protected final static String PASSWORD = "password";
 
-    protected AppUser initDatabaseWithUser() {
+    protected AppUser initDatabaseWithFirstUser() {
         AppUser appUser = new AppUser(USERNAME, PASSWORD);
         return appUserRepository.save(appUser);
     }
@@ -57,7 +57,7 @@ public abstract class InitDataForIT {
     }
 
     protected void initDatabaseWithTwoUsersAndAssets() {
-        AppUser firstUser = initDatabaseWithUser();
+        AppUser firstUser = initDatabaseWithFirstUser();
         List<Asset> assets = new ArrayList<>();
         assets.add(new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, firstUser));
         assets.add(new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.SALARY, firstUser));
@@ -72,7 +72,7 @@ public abstract class InitDataForIT {
     }
 
     protected void initDatabaseWithTwoUsersAndExpenses() {
-        AppUser firstUser = initDatabaseWithUser();
+        AppUser firstUser = initDatabaseWithFirstUser();
         List<Expense> expenses = new ArrayList<>();
 
 
@@ -89,12 +89,13 @@ public abstract class InitDataForIT {
     }
 
     protected void initDatabaseWithExpenseAndUser(AppUser appUser, String date) {
-        Expense expense = new Expense(BigDecimal.ZERO, Instant.parse(date), ExpensesCategory.OTHER, appUser);
+        final String instantFromDateSuffix = "T00:00:00.000Z";
+        Expense expense = new Expense(BigDecimal.ZERO, Instant.parse(date + instantFromDateSuffix), ExpensesCategory.OTHER, appUser);
         expenseRepository.save(expense);
     }
 
     protected void initDatabaseWithTwoUsersAndRelatedData() {
-        AppUser firstUser = initDatabaseWithUser();
+        AppUser firstUser = initDatabaseWithFirstUser();
 
         Asset asset = new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, firstUser);
         Asset asset2 = new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.BONUS, firstUser);
