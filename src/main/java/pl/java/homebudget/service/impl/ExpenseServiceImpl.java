@@ -9,20 +9,13 @@ import pl.java.homebudget.dto.ExpenseDto;
 import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Expense;
-import pl.java.homebudget.enums.ExpenseFilterSetting;
 import pl.java.homebudget.enums.ExpensesCategory;
-import pl.java.homebudget.enums.Month;
 import pl.java.homebudget.exception.ExpenseNotFoundException;
-import pl.java.homebudget.exception.InvalidDateFormatException;
 import pl.java.homebudget.filter.FilterRange;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.ExpenseService;
-import pl.java.homebudget.validator.DateFormatValidator;
 
-import java.time.Instant;
-import java.time.Year;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +29,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final UserLoggedInfo userLoggedInfo;
     private final ExpenseMapper expenseMapper = Mappers.getMapper(ExpenseMapper.class);
-    private final FilterRange expenseFilterRange;
+    private final FilterRange<Expense> expenseFilterRange;
 
     @Override
     public List<ExpenseDto> getExpenses() {

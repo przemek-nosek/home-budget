@@ -6,6 +6,7 @@ import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,5 +19,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     void deleteAllByAppUser(AppUser appUser);
 
     Optional<Asset> findByIdAndAppUser(Long id, AppUser appUser);
+
+    List<Asset> findAllByIncomeDateBetweenAndAppUser(Instant from, Instant to, AppUser appUser);
 }
 

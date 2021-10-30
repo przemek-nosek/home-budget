@@ -1,6 +1,6 @@
 package pl.java.homebudget.enums;
 
-public enum ExpenseFilterSetting {
+public enum DateFilterSetting {
     FROM_DATE("from"),
     TO_DATE("to"),
     MONTH("month"),
@@ -8,7 +8,7 @@ public enum ExpenseFilterSetting {
 
     private final String setting;
 
-    ExpenseFilterSetting(String setting) {
+    DateFilterSetting(String setting) {
         this.setting = setting;
     }
 

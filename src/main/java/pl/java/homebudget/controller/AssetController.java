@@ -11,6 +11,7 @@ import pl.java.homebudget.service.AssetService;
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/assets")
@@ -32,6 +33,13 @@ public class AssetController {
                 .getAssetsByCategory(AssetCategory.valueOf(category.toUpperCase()));
 
         return new ResponseEntity<>(assetsByCategory, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<AssetDto>> getFilteredAssets(@RequestParam Map<String, String> filters) {
+        List<AssetDto> assetDtoList = assetService.getFilteredAssets(filters);
+
+        return new ResponseEntity<>(assetDtoList, HttpStatus.OK);
     }
 
     @PostMapping

@@ -11,12 +11,13 @@ import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
+import pl.java.homebudget.filter.FilterRange;
 import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.AssetService;
-import pl.java.homebudget.validator.FilterParameterValidator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,8 @@ public class AssetServiceImpl implements AssetService {
     private final AssetRepository assetRepository;
     private final AssetMapper assetMapper = Mappers.getMapper(AssetMapper.class);
     private final UserLoggedInfo userLoggedInfo;
-    private final FilterParameterValidator assetFilterParameterValidator;
+    private final FilterRange<Asset> assetFilterRange;
+
 
     @Override
     public List<AssetDto> getAssets() {
@@ -126,5 +128,18 @@ public class AssetServiceImpl implements AssetService {
         log.info("deleteAssetsByAppUser");
 
         assetRepository.deleteAllByAppUser(loggedUser);
+    }
+
+    @Override
+    public List<AssetDto> getFilteredAssets(Map<String, String> filters) {
+        log.info("getFilteredExpenses");
+        log.debug("filters {}", filters);
+
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        return assetFilterRange.getAllByFilter(loggedAppUser, filters)
+                .stream()
+                .map(assetMapper::fromAssetToDto)
+                .collect(Collectors.toList());
     }
 }

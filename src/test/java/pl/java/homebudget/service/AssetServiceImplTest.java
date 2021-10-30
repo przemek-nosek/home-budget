@@ -2,16 +2,24 @@ package pl.java.homebudget.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.java.homebudget.dto.AssetDto;
+import pl.java.homebudget.dto.ExpenseDto;
 import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
+import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.AssetCategory;
+import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
+import pl.java.homebudget.exception.MissingExpenseFilterSettingException;
+import pl.java.homebudget.filter.FilterRange;
 import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.impl.AssetServiceImpl;
@@ -20,8 +28,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,6 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class AssetServiceImplTest {
@@ -42,6 +53,9 @@ class AssetServiceImplTest {
     private AssetServiceImpl assetService;
 
     private final AssetMapper assetMapper = Mappers.getMapper(AssetMapper.class);
+
+    @Mock
+    private FilterRange<Asset> assetFilterRange;
 
     @Test
     void getAssets() {
@@ -189,5 +203,62 @@ class AssetServiceImplTest {
         //then
         assertThat(assetsByCategory).hasSize(3);
         then(assetRepository).should().findAllByCategoryAndAppUser(assetCategory, appUser);
+    }
+
+    @ParameterizedTest(name = "Filters: {0} and {1}")
+    @MethodSource(value = "getFilters")
+    void shouldGetFilteredAssets_byFilters(String firstFilter, String secondFilter, Map<String, String> filters) {
+        //given
+
+
+        AppUser appUser = getAppUser();
+        List<Asset> assetList = List.of(
+                new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, appUser),
+                new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.LOAN_RETURNED, appUser),
+                new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.SALARY, appUser)
+        );
+        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(assetFilterRange.getAllByFilter(appUser, filters)).willReturn(assetList);
+
+        //when
+        List<AssetDto> filteredExpenses = assetService.getFilteredAssets(filters);
+
+
+        //then
+        assertThat(filteredExpenses).hasSize(3);
+    }
+
+
+    @ParameterizedTest(name = "existing filter: {0}, missing filter: {1}")
+    @MethodSource(value = "getFiltersWithOneMissingFilter")
+    void shouldNotGetFilteredAssets_andThrowMissingExpenseFilterSettingException(String existingFilter, String missingFilter, Map<String, String> filters) {
+        //given
+        AppUser appUser = getAppUser();
+        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        doThrow(new MissingExpenseFilterSettingException("Missing filter setting: " + missingFilter)).when(assetFilterRange).getAllByFilter(appUser, filters);
+
+        //when
+        MissingExpenseFilterSettingException ex = assertThrows(MissingExpenseFilterSettingException.class, () -> assetService.getFilteredAssets(filters));
+
+        //then
+        assertThat(ex.getMessage()).isEqualTo("Missing filter setting: " + missingFilter);
+    }
+
+    private static Stream<Arguments> getFiltersWithOneMissingFilter() {
+        return Stream.of(
+                Arguments.of("from", "to", Map.of("from", "2021-10-01", "missingTo", "2021-10-30")),
+                Arguments.of("to", "from", Map.of("missingFrom", "2021-10-01", "to", "2021-10-30")),
+                Arguments.of("month", "year", Map.of("month", "october", "missingYear", "2021")),
+                Arguments.of("year", "month", Map.of("missingMonth", "october", "year", "2021")));
+    }
+
+    private static Stream<Arguments> getFilters() {
+        return Stream.of(
+                Arguments.of("from", "to", Map.of("from", "2021-10-01", "to", "2021-10-30")),
+                Arguments.of("month", "year", Map.of("month", "october", "year", "2021")));
+    }
+
+    private AppUser getAppUser() {
+        return new AppUser("user", "password");
     }
 }

@@ -4,6 +4,7 @@ import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.enums.AssetCategory;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AssetService {
     List<AssetDto> getAssets();
@@ -19,4 +20,6 @@ public interface AssetService {
     List<AssetDto> getAssetsByCategory(AssetCategory assetCategory);
 
     void deleteAssetsByAppUser();
+
+    List<AssetDto> getFilteredAssets(Map<String, String> filters);
 }

@@ -54,7 +54,7 @@ class ExpenseServiceImplTest {
     private ExpenseMapper expenseMapper;
 
     @Mock
-    private FilterRange expenseFilterRange;
+    private FilterRange<Expense> expenseFilterRange;
 
     @Test
     void shouldGetAllExpenses() {
@@ -205,8 +205,7 @@ class ExpenseServiceImplTest {
     @MethodSource(value = "getFilters")
     void shouldGetFilteredExpenses_byFilters(String firstFilter, String secondFilter, Map<String, String> filters) {
         //given
-        Instant now = Instant.now();
-        Instant later = Instant.now().plus(60L, ChronoUnit.SECONDS);
+
 
         AppUser appUser = getAppUser();
         List<Expense> expenseList = List.of(
