@@ -1,14 +1,15 @@
 package pl.java.homebudget.enums;
 
-public enum DateFilterSetting {
+public enum FilterParameterSetting {
     FROM_DATE("from"),
     TO_DATE("to"),
     MONTH("month"),
-    YEAR("year");
+    YEAR("year"),
+    CATEGORY("category");
 
     private final String setting;
 
-    DateFilterSetting(String setting) {
+    FilterParameterSetting(String setting) {
         this.setting = setting;
     }
 

@@ -185,6 +185,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         assertThat(filteredExpenses).hasSize(3);
     }
 
+
     @ParameterizedTest(name = "existing filter: {0}, missing filter: {1}")
     @MethodSource(value = "getFiltersWithOneMissingFilter")
     void shouldNotGetFilteredExpenses_andThrowMissingExpenseFilterSettingException(String existingFilter, String missingFilter, Map<String, String> filters) {
@@ -198,6 +199,26 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         assertThat(ex.getMessage()).isEqualTo("Missing filter setting: " + missingFilter);
     }
 
+    @ParameterizedTest(name = "Filters: {0} and {1}")
+    @MethodSource(value = "getFilters")
+    void shouldGetFilteredExpensesWithSetCategory(String firstFilter, String secondFilter, Map<String, String> filters) {
+        //given
+        ExpensesCategory wantedCategory = ExpensesCategory.OTHER;
+        ExpensesCategory notWantedCategory = ExpensesCategory.FOR_LIFE;
+
+        AppUser appUser = initDatabaseWithFirstUser();
+        initDatabaseWithExpenseAndUser(appUser, "2021-10-01", wantedCategory);
+        initDatabaseWithExpenseAndUser(appUser, "2021-10-10", notWantedCategory);
+        initDatabaseWithExpenseAndUser(appUser, "2021-10-20", wantedCategory);
+        initDatabaseWithExpenseAndUser(appUser, "2021-10-25", wantedCategory);
+
+        //when
+        List<ExpenseDto> filteredExpenses = expenseService.getFilteredExpenses(filters);
+
+        //then
+        assertThat(filteredExpenses).hasSize(3);
+    }
+
     private static Stream<Arguments> getFiltersWithOneMissingFilter() {
         return Stream.of(
                 Arguments.of("from", "to", Map.of("from", "2021-10-01", "missingTo", "2021-10-30")),
@@ -208,7 +229,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
 
     private static Stream<Arguments> getFilters() {
         return Stream.of(
-                Arguments.of("from", "to", Map.of("from", "2021-10-01", "to", "2021-10-30")),
-                Arguments.of("month", "year", Map.of("month", "october", "year", "2021")));
+                Arguments.of("from", "to", Map.of("from", "2021-10-01", "to", "2021-10-30", "category", "other")),
+                Arguments.of("month", "year", Map.of("month", "october", "year", "2021", "category", "other")));
     }
 }

@@ -94,6 +94,12 @@ public abstract class InitDataForIT {
         expenseRepository.save(expense);
     }
 
+    protected void initDatabaseWithExpenseAndUser(AppUser appUser, String date, ExpensesCategory category) {
+        final String instantFromDateSuffix = "T00:00:00.000Z";
+        Expense expense = new Expense(BigDecimal.ZERO, Instant.parse(date + instantFromDateSuffix), category, appUser);
+        expenseRepository.save(expense);
+    }
+
     protected void initDatabaseWithAssetAndUser(AppUser appUser, String date) {
         final String instantFromDateSuffix = "T00:00:00.000Z";
         Asset asset = new Asset(BigDecimal.ZERO, Instant.parse(date + instantFromDateSuffix), AssetCategory.OTHER, appUser);

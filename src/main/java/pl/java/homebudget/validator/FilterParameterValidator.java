@@ -1,7 +1,7 @@
 package pl.java.homebudget.validator;
 
 import org.springframework.stereotype.Component;
-import pl.java.homebudget.enums.DateFilterSetting;
+import pl.java.homebudget.enums.FilterParameterSetting;
 import pl.java.homebudget.exception.MissingExpenseFilterSettingException;
 
 import java.util.Map;
@@ -17,29 +17,29 @@ public class FilterParameterValidator {
     }
 
     private void containsMonthButNotYearFilter(Map<String, String> filters) {
-        if (filters.containsKey(DateFilterSetting.MONTH.getSetting()) &&
-                !filters.containsKey(DateFilterSetting.YEAR.getSetting())) {
+        if (filters.containsKey(FilterParameterSetting.MONTH.getSetting()) &&
+                !filters.containsKey(FilterParameterSetting.YEAR.getSetting())) {
             throw new MissingExpenseFilterSettingException("Missing filter setting: year");
         }
     }
 
     private void containsYearButNotMonthFilter(Map<String, String> filters) {
-        if (!filters.containsKey(DateFilterSetting.MONTH.getSetting()) &&
-                filters.containsKey(DateFilterSetting.YEAR.getSetting())) {
+        if (!filters.containsKey(FilterParameterSetting.MONTH.getSetting()) &&
+                filters.containsKey(FilterParameterSetting.YEAR.getSetting())) {
             throw new MissingExpenseFilterSettingException("Missing filter setting: month");
         }
     }
 
     private void containsFromButNotToFilter(Map<String, String> filters) {
-        if (filters.containsKey(DateFilterSetting.FROM_DATE.getSetting()) &&
-                !filters.containsKey(DateFilterSetting.TO_DATE.getSetting())) {
+        if (filters.containsKey(FilterParameterSetting.FROM_DATE.getSetting()) &&
+                !filters.containsKey(FilterParameterSetting.TO_DATE.getSetting())) {
             throw new MissingExpenseFilterSettingException("Missing filter setting: to");
         }
     }
 
     private void containsToButNotFromFilter(Map<String, String> filters) {
-        if (!filters.containsKey(DateFilterSetting.FROM_DATE.getSetting()) &&
-                filters.containsKey(DateFilterSetting.TO_DATE.getSetting())) {
+        if (!filters.containsKey(FilterParameterSetting.FROM_DATE.getSetting()) &&
+                filters.containsKey(FilterParameterSetting.TO_DATE.getSetting())) {
             throw new MissingExpenseFilterSettingException("Missing filter setting: from");
         }
     }
