@@ -13,6 +13,7 @@ import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.repository.ExpenseRepository;
+import pl.java.homebudget.repository.PropertyRepository;
 import pl.java.homebudget.service.impl.AppUserService;
 
 import java.math.BigDecimal;
@@ -33,6 +34,9 @@ public abstract class InitDataForIT {
 
     @Autowired
     protected ExpenseRepository expenseRepository;
+
+    @Autowired
+    protected PropertyRepository propertyRepository;
 
     @Autowired
     protected AppUserService appUserService;
@@ -94,7 +98,7 @@ public abstract class InitDataForIT {
         expenseRepository.save(expense);
     }
 
-    protected void initDatabaseWithExpenseAndUser(AppUser appUser, String date, ExpensesCategory category) {
+    protected void initDatabaseWithExpenseAndUserByCategory(AppUser appUser, String date, ExpensesCategory category) {
         final String instantFromDateSuffix = "T00:00:00.000Z";
         Expense expense = new Expense(BigDecimal.ZERO, Instant.parse(date + instantFromDateSuffix), category, appUser);
         expenseRepository.save(expense);

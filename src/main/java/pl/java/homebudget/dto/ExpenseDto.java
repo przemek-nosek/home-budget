@@ -1,6 +1,7 @@
 package pl.java.homebudget.dto;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import pl.java.homebudget.enums.ExpensesCategory;
 
 import javax.validation.constraints.DecimalMin;
@@ -26,6 +27,9 @@ public class ExpenseDto {
 
     @NotNull(message = "Category is null.")
     private ExpensesCategory category;
+
+    @Length(min = 2, max = 255)
+    private String description;
 
     @Override
     public boolean equals(Object o) {

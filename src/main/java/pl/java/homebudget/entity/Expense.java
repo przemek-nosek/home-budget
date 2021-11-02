@@ -30,6 +30,8 @@ public class Expense {
     @Enumerated(value = EnumType.STRING)
     private ExpensesCategory category;
 
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ToString.Exclude
     private AppUser appUser;

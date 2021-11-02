@@ -10,8 +10,8 @@ import pl.java.homebudget.entity.Expense;
 public interface ExpenseMapper {
 
     @Mapping(source = "dto.id", target = "id")
-    Expense fromDtoToAsset(ExpenseDto dto, AppUser appUser);
+    Expense fromDtoToExpense(ExpenseDto dto, AppUser appUser);
 
     @Mapping(target = "amount")
-    ExpenseDto fromAssetToDto(Expense asset);
+    ExpenseDto fromExpenseToDto(Expense asset);
 }

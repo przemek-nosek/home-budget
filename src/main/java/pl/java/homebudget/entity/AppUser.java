@@ -20,10 +20,11 @@ public class AppUser {
     private Long id;
 
     @NotNull
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
     @NotNull
+    @Column(nullable = false)
     private String password;
 
     public AppUser(String username, String password) {

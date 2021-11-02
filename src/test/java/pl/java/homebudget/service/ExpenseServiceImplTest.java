@@ -82,7 +82,7 @@ class ExpenseServiceImplTest {
     @Test
     void shouldAddExpense() {
         //given
-        ExpenseDto expenseDto = new ExpenseDto(1L, BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER);
+        ExpenseDto expenseDto = new ExpenseDto(1L, BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, "desc");
         AppUser appUser = getAppUser();
         Expense expense = new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser);
 
@@ -171,7 +171,7 @@ class ExpenseServiceImplTest {
     @Test
     void updateExpense_successfully() {
         //given
-        ExpenseDto expenseDto = new ExpenseDto(1L, BigDecimal.TEN, Instant.now(), ExpensesCategory.OTHER);
+        ExpenseDto expenseDto = new ExpenseDto(1L, BigDecimal.TEN, Instant.now(), ExpensesCategory.OTHER, "desc");
         AppUser appUser = new AppUser("username", "password");
         Expense expense = new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser);
 //        asset.setId(1L);
@@ -192,7 +192,7 @@ class ExpenseServiceImplTest {
     @Test
     void updateAsset_fails_andThrowsAssetNotFoundException() {
         //given
-        ExpenseDto expenseDto = new ExpenseDto(-1L, BigDecimal.TEN, Instant.now(), ExpensesCategory.OTHER);
+        ExpenseDto expenseDto = new ExpenseDto(-1L, BigDecimal.TEN, Instant.now(), ExpensesCategory.OTHER, "desc");
         given(expenseRepository.findByIdAndAppUser(anyLong(), any())).willThrow(AssetNotFoundException.class);
 
         //when

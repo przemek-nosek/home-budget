@@ -39,8 +39,8 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         return expenseRepository.findAllByAppUser(loggedAppUser)
                 .stream()
-                .map(expenseMapper::fromAssetToDto)
-                .collect(Collectors.toList());
+                .map(expenseMapper::fromExpenseToDto)
+                .toList();
     }
 
     @Override
@@ -50,13 +50,13 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
-        Expense expense = expenseMapper.fromDtoToAsset(expenseDto, loggedAppUser);
+        Expense expense = expenseMapper.fromDtoToExpense(expenseDto, loggedAppUser);
 
         Expense savedExpense = expenseRepository.save(expense);
 
         log.info("Expense added");
 
-        return expenseMapper.fromAssetToDto(savedExpense);
+        return expenseMapper.fromExpenseToDto(savedExpense);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         return expenseRepository.findAllByCategoryAndAppUser(expensesCategory, loggedAppUser)
                 .stream()
-                .map(expenseMapper::fromAssetToDto)
+                .map(expenseMapper::fromExpenseToDto)
                 .collect(Collectors.toList());
     }
 
@@ -79,7 +79,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
-        Expense expense = expenseMapper.fromDtoToAsset(expenseDto, loggedAppUser);
+        Expense expense = expenseMapper.fromDtoToExpense(expenseDto, loggedAppUser);
 
         expenseRepository.delete(expense);
         log.info("Expense deleted");
@@ -129,7 +129,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         }
 
         log.info("Expense updated: {}", expense);
-        return expenseMapper.fromAssetToDto(expense);
+        return expenseMapper.fromExpenseToDto(expense);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         return expenseFilterRange.getAllByFilter(loggedAppUser, filters)
                 .stream()
-                .map(expenseMapper::fromAssetToDto)
+                .map(expenseMapper::fromExpenseToDto)
                 .collect(Collectors.toList());
     }
 

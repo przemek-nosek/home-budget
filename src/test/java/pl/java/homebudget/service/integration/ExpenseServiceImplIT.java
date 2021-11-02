@@ -52,7 +52,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     void shouldAddExpense() {
         //given
         initDatabaseWithFirstUser();
-        ExpenseDto expenseDto = new ExpenseDto(1L, BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER);
+        ExpenseDto expenseDto = new ExpenseDto(1L, BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, "desc");
 
         //when
         ExpenseDto addedExpense = expenseService.addExpense(expenseDto);
@@ -69,7 +69,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         initDatabaseWithTwoUsersAndExpenses();
         List<Expense> expenses = expenseRepository.findAll();
         Expense expense = expenses.get(0);
-        ExpenseDto expenseDto = expenseMapper.fromAssetToDto(expense);
+        ExpenseDto expenseDto = expenseMapper.fromExpenseToDto(expense);
 
         //when
         expenseService.deleteExpense(expenseDto);
@@ -112,7 +112,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         initDatabaseWithTwoUsersAndExpenses();
         Expense expense = expenseRepository.findAll().get(0);
 
-        ExpenseDto expenseDto = new ExpenseDto(expense.getId(), BigDecimal.valueOf(51283L), Instant.now(), ExpensesCategory.OTHER);
+        ExpenseDto expenseDto = new ExpenseDto(expense.getId(), BigDecimal.valueOf(51283L), Instant.now(), ExpensesCategory.OTHER, "desc");
 
         //when
         ExpenseDto updatedExpense = expenseService.updateExpense(expenseDto);
@@ -127,7 +127,7 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         //given
         initDatabaseWithFirstUser();
         Long notExistsId = -52L;
-        ExpenseDto expenseDto = new ExpenseDto(notExistsId, BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER);
+        ExpenseDto expenseDto = new ExpenseDto(notExistsId, BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, "desc");
 
         //when
         //then
@@ -207,10 +207,10 @@ public class ExpenseServiceImplIT extends InitDataForIT {
         ExpensesCategory notWantedCategory = ExpensesCategory.FOR_LIFE;
 
         AppUser appUser = initDatabaseWithFirstUser();
-        initDatabaseWithExpenseAndUser(appUser, "2021-10-01", wantedCategory);
-        initDatabaseWithExpenseAndUser(appUser, "2021-10-10", notWantedCategory);
-        initDatabaseWithExpenseAndUser(appUser, "2021-10-20", wantedCategory);
-        initDatabaseWithExpenseAndUser(appUser, "2021-10-25", wantedCategory);
+        initDatabaseWithExpenseAndUserByCategory(appUser, "2021-10-01", wantedCategory);
+        initDatabaseWithExpenseAndUserByCategory(appUser, "2021-10-10", notWantedCategory);
+        initDatabaseWithExpenseAndUserByCategory(appUser, "2021-10-20", wantedCategory);
+        initDatabaseWithExpenseAndUserByCategory(appUser, "2021-10-25", wantedCategory);
 
         //when
         List<ExpenseDto> filteredExpenses = expenseService.getFilteredExpenses(filters);
