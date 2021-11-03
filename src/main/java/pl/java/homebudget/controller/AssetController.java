@@ -63,13 +63,6 @@ public class AssetController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAssetById(@PathVariable("id") Long id) {
-        assetService.deleteAssetById(id);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     @PutMapping
     public ResponseEntity<AssetDto> updateAsset(@RequestBody AssetDto assetDto) {
         AssetDto updatedAsset = assetService.updateAsset(assetDto);

@@ -15,6 +15,7 @@ import pl.java.homebudget.mapper.AppUserMapper;
 import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.repository.ExpenseRepository;
+import pl.java.homebudget.repository.PropertyRepository;
 import pl.java.homebudget.service.impl.AppUserService;
 
 import java.util.Optional;
@@ -37,6 +38,9 @@ class AppUserServiceTest {
 
     @Mock
     private ExpenseRepository expenseRepository;
+
+    @Mock
+    private PropertyRepository propertyRepository;
 
     @Mock
     private AppUserMapper appUserMapper;

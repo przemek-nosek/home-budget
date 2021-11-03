@@ -23,5 +23,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     Optional<Asset> findByIdAndAppUser(Long id, AppUser appUser);
 
     List<Asset> findAllByIncomeDateBetweenAndAppUserAndCategoryIn(Instant from, Instant to, AppUser appUser, List<AssetCategory> categories);
+
+    boolean existsByIdAndAppUser(Long id, AppUser appUser);
 }
 

@@ -83,33 +83,6 @@ public class AssetServiceImplIT extends InitDataForIT {
     }
 
     @Test
-    void shouldDeleteAssetById() {
-        //given
-        initDatabaseWithTwoUsersAndAssets();
-        List<Asset> assetList = assetRepository.findAll();
-        Asset asset = assetList.get(0);
-
-        Long id = asset.getId();
-
-        //when
-        assetService.deleteAssetById(id);
-
-        //then
-        assertThat(assetRepository.existsById(id)).isFalse();
-    }
-
-    @Test
-    void shouldNotDeleteById_WhenIdDoesNotExist() {
-        //given
-        Long notExistsId = -52L;
-
-
-        //when
-        //then
-        assertThrows(AssetNotFoundException.class, () -> assetService.deleteAssetById(notExistsId));
-    }
-
-    @Test
     void shouldUpdateAsset() {
         //given
         initDatabaseWithTwoUsersAndAssets();

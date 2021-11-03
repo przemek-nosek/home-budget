@@ -81,32 +81,6 @@ public class ExpenseServiceImplIT extends InitDataForIT {
     }
 
     @Test
-    void shouldDeleteExpenseById() {
-        //given
-        initDatabaseWithTwoUsersAndExpenses();
-        List<Expense> expenses = expenseRepository.findAll();
-        Expense expense = expenses.get(0);
-
-        Long id = expense.getId();
-
-        //when
-        expenseService.deleteExpenseById(id);
-
-        //then
-        assertThat(expenseRepository.existsById(id)).isFalse();
-    }
-
-    @Test
-    void shouldNotDeleteById_WhenIdDoesNotExist() {
-        //given
-        Long notExistsId = -52L;
-
-        //when
-        //then
-        assertThrows(ExpenseNotFoundException.class, () -> expenseService.deleteExpenseById(notExistsId));
-    }
-
-    @Test
     void shouldUpdateExpense() {
         //given
         initDatabaseWithTwoUsersAndExpenses();

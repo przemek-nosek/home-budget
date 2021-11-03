@@ -105,7 +105,7 @@ class AssetServiceImplTest {
     void deleteAsset() {
         //given
         AssetDto assetDto = new AssetDto();
-
+        given(assetRepository.existsByIdAndAppUser(any(), any())).willReturn(true);
         //when
         assetService.deleteAsset(assetDto);
 
@@ -114,18 +114,6 @@ class AssetServiceImplTest {
 
     }
 
-    @Test
-    void deleteAssetById_successfully_whenAssetExistsById() {
-        //given
-        Long id = 1L;
-        given(assetRepository.existsById(anyLong())).willReturn(true);
-
-        //when
-        assetService.deleteAssetById(id);
-
-        //then
-        then(assetRepository).should().deleteById(anyLong());
-    }
 
     @Test
     void shouldDeleteAssetsByAppUser() {
@@ -135,18 +123,6 @@ class AssetServiceImplTest {
 
         //then
         then(assetRepository).should().deleteAllByAppUser(any());
-    }
-
-    @Test
-    void deleteAssetById_fails_whenAssetDoesNotExistsById_andThrow_AssetNotFoundException() {
-        //given
-        given(assetRepository.existsById(anyLong())).willReturn(false);
-
-        //when
-        //then
-        assertThrows(AssetNotFoundException.class, () -> assetService.deleteAssetById(anyLong()));
-        then(assetRepository).should().existsById(anyLong());
-        then(assetRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test

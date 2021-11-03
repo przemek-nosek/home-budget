@@ -41,11 +41,12 @@ public class PropertyDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PropertyDto that)) return false;
-        return Objects.equals(getId(), that.getId());
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getCity(), that.getCity()) && Objects.equals(getPostCode(), that.getPostCode()) &&
+                Objects.equals(getStreet(), that.getStreet()) && Objects.equals(getHouse(), that.getHouse());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getId(), getCity(), getPostCode(), getStreet(), getHouse());
     }
 }

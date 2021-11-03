@@ -13,6 +13,6 @@ public interface PropertyMapper {
     Property fromDtoToProperty(PropertyDto dto, AppUser appUser);
 
     @Mapping(target = "house")
-    PropertyDto fromPropertyToDto(Property asset);
+    PropertyDto fromPropertyToDto(Property property);
 
 }

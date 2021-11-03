@@ -16,6 +16,7 @@ import pl.java.homebudget.mapper.AppUserMapper;
 import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.repository.ExpenseRepository;
+import pl.java.homebudget.repository.PropertyRepository;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ public class AppUserService implements UserDetailsService {
     private final AppUserMapper appUserMapper;
     private final AssetRepository assetRepository;
     private final ExpenseRepository expenseRepository;
+    private final PropertyRepository propertyRepository;
     private final UserLoggedInfo userLoggedInfo;
 
     @Override
@@ -70,6 +72,7 @@ public class AppUserService implements UserDetailsService {
 
         assetRepository.deleteAllByAppUser(loggedAppUser);
         expenseRepository.deleteAllByAppUser(loggedAppUser);
+        propertyRepository.deleteAllByAppUser(loggedAppUser);
         appUserRepository.delete(loggedAppUser);
     }
 }

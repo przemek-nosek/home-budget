@@ -8,6 +8,7 @@ import pl.java.homebudget.dto.AuthenticationRequest;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.entity.Expense;
+import pl.java.homebudget.entity.Property;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.repository.AppUserRepository;
@@ -108,6 +109,23 @@ public abstract class InitDataForIT {
         final String instantFromDateSuffix = "T00:00:00.000Z";
         Asset asset = new Asset(BigDecimal.ZERO, Instant.parse(date + instantFromDateSuffix), AssetCategory.OTHER, appUser);
         assetRepository.save(asset);
+    }
+
+    protected void initDatabaseWithPropertyAndUser(AppUser appUser) {
+        Property property = Property.builder()
+                .rooms(2)
+                .single(true)
+                .city("szczecin")
+                .postCode("11-111")
+                .street("nowa")
+                .house("15")
+                .appUser(appUser)
+                .build();
+        propertyRepository.save(property);
+    }
+
+    protected void initDatabaseWithPropertyAndUser(Property property, AppUser appUser) {
+        propertyRepository.save(property);
     }
 
     protected void initDatabaseWithTwoUsersAndRelatedData() {

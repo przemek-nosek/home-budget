@@ -125,37 +125,13 @@ class ExpenseServiceImplTest {
     void shouldDeleteExpense() {
         //given
         ExpenseDto expenseDto = new ExpenseDto();
+        given(expenseRepository.existsByIdAndAppUser(any(), any())).willReturn(true);
 
         //when
         expenseService.deleteExpense(expenseDto);
 
         //then
         then(expenseRepository).should().delete(any());
-    }
-
-    @Test
-    void shouldDeleteExpenseById_successfully_whenAssetExistsById() {
-        //given
-        Long id = 1L;
-        given(expenseRepository.existsById(anyLong())).willReturn(true);
-
-        //when
-        expenseService.deleteExpenseById(id);
-
-        //then
-        then(expenseRepository).should().deleteById(anyLong());
-    }
-
-    @Test
-    void deleteExpenseById_fails_whenAssetDoesNotExistsById_andThrow_AssetNotFoundException() {
-        //given
-        given(expenseRepository.existsById(anyLong())).willReturn(false);
-
-        //when
-        //then
-        assertThrows(ExpenseNotFoundException.class, () -> expenseService.deleteExpenseById(anyLong()));
-        then(expenseRepository).should().existsById(anyLong());
-        then(expenseRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test

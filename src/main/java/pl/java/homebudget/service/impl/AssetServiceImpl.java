@@ -40,7 +40,7 @@ public class AssetServiceImpl implements AssetService {
 
         return assetRepository.findAllByAppUser(loggedAppUser).stream()
                 .map(assetMapper::fromAssetToDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -58,29 +58,23 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    @Transactional
     public void deleteAsset(AssetDto assetDto) {
         log.info("Delete Asset");
         log.debug("AssetDto details: {}", assetDto);
 
+        Long id = assetDto.getId();
         AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
-        Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
 
-        assetRepository.delete(asset);
-        log.info("Asset deleted");
-    }
-
-    @Override
-    @Transactional
-    public void deleteAssetById(Long id) {
-        log.info("Delete Asset by ID: {}", id);
-        boolean existsById = assetRepository.existsById(id);
-
+        boolean existsById = assetRepository.existsByIdAndAppUser(id, loggedUser);
         if (!existsById) {
             throw new AssetNotFoundException(String.format("Asset with given id %d not found", id));
         }
 
-        assetRepository.deleteById(id);
-        log.info("Asset by ID deleted");
+        Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
+
+        assetRepository.delete(asset);
+        log.info("Asset deleted");
     }
 
     @Override

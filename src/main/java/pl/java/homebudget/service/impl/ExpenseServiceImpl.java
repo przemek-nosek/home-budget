@@ -73,30 +73,24 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
+    @Transactional
     public void deleteExpense(ExpenseDto expenseDto) {
         log.info("deleteExpense");
         log.debug("expenseDto {}", expenseDto);
 
+        Long id = expenseDto.getId();
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
-        Expense expense = expenseMapper.fromDtoToExpense(expenseDto, loggedAppUser);
-
-        expenseRepository.delete(expense);
-        log.info("Expense deleted");
-    }
-
-    @Override
-    @Transactional
-    public void deleteExpenseById(Long id) {
-        log.info("deleteExpenseById");
-
-        boolean existsById = expenseRepository.existsById(id);
+        boolean existsById = expenseRepository.existsByIdAndAppUser(id, loggedAppUser);
 
         if (!existsById) {
             throw new ExpenseNotFoundException(String.format("Expense with given id %d not found", id));
         }
 
-        expenseRepository.deleteById(id);
+        Expense expense = expenseMapper.fromDtoToExpense(expenseDto, loggedAppUser);
+
+        expenseRepository.delete(expense);
+        log.info("Expense deleted");
     }
 
     @Override

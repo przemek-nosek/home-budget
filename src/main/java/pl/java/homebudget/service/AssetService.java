@@ -13,8 +13,6 @@ public interface AssetService {
 
     void deleteAsset(AssetDto assetDto);
 
-    void deleteAssetById(Long id);
-
     AssetDto updateAsset(AssetDto assetDto);
 
     List<AssetDto> getAssetsByCategory(AssetCategory assetCategory);

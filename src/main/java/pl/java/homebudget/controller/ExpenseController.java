@@ -58,13 +58,6 @@ public class ExpenseController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteExpenseById(@PathVariable Long id) {
-        expenseService.deleteExpenseById(id);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     @DeleteMapping("/user")
     public ResponseEntity<?> deleteExpensesByAppUser() {
         expenseService.deleteExpensesByAppUser();
