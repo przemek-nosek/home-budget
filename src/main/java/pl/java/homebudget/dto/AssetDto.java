@@ -19,7 +19,7 @@ public class AssetDto {
     private Long id;
 
     @NotNull(message = "Amount is null.")
-    @DecimalMin(value = "0.0", inclusive = false)
+    @DecimalMin(value = "0.00", inclusive = false)
     private BigDecimal amount;
 
     @NotNull(message = "Income date is null.")

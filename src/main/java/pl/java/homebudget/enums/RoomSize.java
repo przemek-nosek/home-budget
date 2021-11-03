@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum RoomType {
+public enum RoomSize {
     ROOM_XS("xs"),
     ROOM_S("s"),
     ROOM_M("m"),

@@ -6,7 +6,7 @@ import pl.java.homebudget.dto.ExpenseDto;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Expense;
 
-@Mapper
+@Mapper(componentModel = "spring") // TODO: @Autowired
 public interface ExpenseMapper {
 
     @Mapping(source = "dto.id", target = "id")

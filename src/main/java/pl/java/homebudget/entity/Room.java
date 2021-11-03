@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.java.homebudget.enums.RoomType;
+import pl.java.homebudget.enums.RoomSize;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ public class Room extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private RoomType roomType;
+    private RoomSize roomSize;
 
     @Column(nullable = false)
     private BigDecimal cost;
@@ -30,11 +30,11 @@ public class Room extends BaseEntity {
         if (this == o) return true;
         if (!(o instanceof Room room)) return false;
         if (!super.equals(o)) return false;
-        return getRoomType() == room.getRoomType() && Objects.equals(getCost(), room.getCost());
+        return getRoomSize() == room.getRoomSize() && Objects.equals(getCost(), room.getCost());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getRoomType(), getCost());
+        return Objects.hash(super.hashCode(), getRoomSize(), getCost());
     }
 }
