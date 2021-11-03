@@ -114,11 +114,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense expense = expenseRepository.findByIdAndAppUser(expenseDtoId, loggedAppUser)
                 .orElseThrow(() -> new ExpenseNotFoundException(String.format("Expense with given id %d not found", expenseDtoId)));
 
-        if (Objects.nonNull(expenseDto.getAmount()) && !expenseDto.getAmount().equals(expense.getAmount())) {
+        if (Objects.nonNull(expenseDto.getAmount())) {
             expense.setAmount(expenseDto.getAmount());
         }
 
-        if (Objects.nonNull(expenseDto.getCategory()) && !expenseDto.getCategory().equals(expense.getCategory())) {
+        if (Objects.nonNull(expenseDto.getCategory())) {
             expense.setCategory(expenseDto.getCategory());
         }
 

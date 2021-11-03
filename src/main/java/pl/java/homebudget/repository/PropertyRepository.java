@@ -6,6 +6,7 @@ import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Property;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
@@ -14,4 +15,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     void deleteAllByAppUser(AppUser appUser);
 
     boolean existsByIdAndAppUser(Long id, AppUser appUser);
+
+    Optional<Property> findByIdAndAppUser(Long id, AppUser appUser);
 }

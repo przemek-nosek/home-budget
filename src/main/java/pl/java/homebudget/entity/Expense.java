@@ -17,11 +17,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Expense {
-    @Id
-    @GeneratedValue
-    @Column(updatable = false, nullable = false)
-    private Long id;
+public class Expense extends BaseEntity{
 
     private BigDecimal amount;
 
@@ -32,15 +28,11 @@ public class Expense {
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @ToString.Exclude
-    private AppUser appUser;
-
-    public Expense(BigDecimal amount, Instant purchaseDate, ExpensesCategory category, AppUser appUser) {
+    public Expense(BigDecimal amount, Instant purchaseDate, ExpensesCategory category,  AppUser appUser) {
+        super(appUser);
         this.amount = amount;
         this.purchaseDate = purchaseDate;
         this.category = category;
-        this.appUser = appUser;
     }
 
     @Override

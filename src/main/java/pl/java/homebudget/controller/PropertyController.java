@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.java.homebudget.dto.PropertyDto;
 import pl.java.homebudget.service.PropertyService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,10 +25,17 @@ public class PropertyController {
     }
 
     @PostMapping
-    public ResponseEntity<PropertyDto> addProperty(@RequestBody PropertyDto propertyDto) {
+    public ResponseEntity<PropertyDto> addProperty(@RequestBody @Valid PropertyDto propertyDto) {
         PropertyDto savedProperty = propertyService.addProperty(propertyDto);
 
         return new ResponseEntity<>(savedProperty, HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<PropertyDto> updateProperty(@RequestBody PropertyDto propertyDto) {
+        PropertyDto updatedProperty = propertyService.updateProperty(propertyDto);
+
+        return new ResponseEntity<>(updatedProperty, HttpStatus.OK);
     }
 
     @DeleteMapping

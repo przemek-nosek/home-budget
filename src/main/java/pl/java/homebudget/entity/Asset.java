@@ -17,11 +17,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-public class Asset {
-    @Id
-    @GeneratedValue
-    @Column(updatable = false, nullable = false)
-    private Long id;
+public class Asset extends BaseEntity {
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -32,15 +28,11 @@ public class Asset {
     @Enumerated(value = EnumType.STRING)
     private AssetCategory category;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @ToString.Exclude
-    private AppUser appUser;
-
     public Asset(BigDecimal amount, Instant incomeDate, AssetCategory category, AppUser appUser) {
+        super(appUser);
         this.amount = amount;
         this.incomeDate = incomeDate;
         this.category = category;
-        this.appUser = appUser;
     }
 
     @Override

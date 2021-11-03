@@ -22,17 +22,10 @@ public class PropertyServiceImplIT extends InitDataForIT {
     void shouldGetAllProperties() {
         //given
         AppUser appUser = initDatabaseWithFirstUser();
-        Property property = Property.builder()
-                .rooms(2)
-                .single(true)
-                .city("szczecin")
-                .postCode("11-111")
-                .street("nowa")
-                .house("15")
-                .appUser(appUser)
-                .build();
+        Property property = new Property(2, true, "szczecin", "11-111", "nowa", "15", appUser);
 
-        initDatabaseWithPropertyAndUser(property, appUser);
+
+        initDatabaseWithPropertyAndUser(property);
         //when
         List<PropertyDto> properties = propertyService.getProperties();
 

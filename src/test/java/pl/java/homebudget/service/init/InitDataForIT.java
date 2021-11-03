@@ -112,19 +112,11 @@ public abstract class InitDataForIT {
     }
 
     protected void initDatabaseWithPropertyAndUser(AppUser appUser) {
-        Property property = Property.builder()
-                .rooms(2)
-                .single(true)
-                .city("szczecin")
-                .postCode("11-111")
-                .street("nowa")
-                .house("15")
-                .appUser(appUser)
-                .build();
+        Property property = new Property(2, true, "szczecin", "11-111", "nowa", "15", appUser);
         propertyRepository.save(property);
     }
 
-    protected void initDatabaseWithPropertyAndUser(Property property, AppUser appUser) {
+    protected void initDatabaseWithPropertyAndUser(Property property) {
         propertyRepository.save(property);
     }
 

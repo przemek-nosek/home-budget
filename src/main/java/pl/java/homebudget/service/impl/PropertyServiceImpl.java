@@ -15,6 +15,7 @@ import pl.java.homebudget.repository.PropertyRepository;
 import pl.java.homebudget.service.PropertyService;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -54,7 +55,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     @Transactional
-    public void deleteProperty(PropertyDto propertyDto) {
+    public void deleteProperty(PropertyDto propertyDto) { // TODO: WRITE IT TESTS
         log.info("deleteProperty");
         log.debug("propertyDto {}", propertyDto);
 
@@ -70,6 +71,27 @@ public class PropertyServiceImpl implements PropertyService {
         Property property = propertyMapper.fromDtoToProperty(propertyDto, loggedAppUser);
 
         propertyRepository.delete(property);
+    }
+
+    @Override
+    @Transactional
+    public PropertyDto updateProperty(PropertyDto propertyDto) {
+        log.info("updateProperty");
+        log.info("propertyDto {}", propertyDto);
+
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        Long id = propertyDto.getId();
+        Property property = propertyRepository.findByIdAndAppUser(id, loggedAppUser)
+                .orElseThrow(() -> new PropertyNotFoundException(String.format("Property with given id: %d not found", id)));
+
+
+        // TODO: write own validator
+        if (Objects.nonNull(propertyDto.getRooms()) && !propertyDto.getRooms().equals(property.getRooms()) ) {
+            property.setRooms(propertyDto.getRooms());
+        }
+
+        return propertyMapper.fromPropertyToDto(property);
     }
 
 }

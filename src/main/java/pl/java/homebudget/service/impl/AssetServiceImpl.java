@@ -89,11 +89,11 @@ public class AssetServiceImpl implements AssetService {
         Asset assetToUpdate = assetRepository.findByIdAndAppUser(id, loggedAppUser)
                 .orElseThrow(() -> new AssetNotFoundException(String.format("Asset with given id %d not found", id)));
 
-        if (Objects.nonNull(assetDto.getAmount()) && !assetDto.getAmount().equals(assetToUpdate.getAmount())) {
+        if (Objects.nonNull(assetDto.getAmount())) {
             assetToUpdate.setAmount(assetDto.getAmount());
         }
 
-        if (Objects.nonNull(assetDto.getCategory()) && !assetDto.getCategory().equals(assetToUpdate.getCategory())) {
+        if (Objects.nonNull(assetDto.getCategory())) {
             assetToUpdate.setCategory(assetDto.getCategory());
         }
 

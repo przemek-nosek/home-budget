@@ -11,4 +11,6 @@ public interface PropertyService {
     List<PropertyDto> getProperties();
 
     void deleteProperty(PropertyDto propertyDto);
+
+    PropertyDto updateProperty(PropertyDto propertyDto);
 }

@@ -13,11 +13,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Property {
-    @Id
-    @GeneratedValue
-    @Column(updatable = false, nullable = false)
-    private Long id;
+public class Property extends BaseEntity{
 
     @Column(nullable = false)
     private Integer rooms;
@@ -36,18 +32,14 @@ public class Property {
 
     private String house;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @ToString.Exclude
-    private AppUser appUser;
-
     public Property(Integer rooms, Boolean single, String city, String postCode, String street, String house, AppUser appUser) {
+        super(appUser);
         this.rooms = rooms;
         this.single = single;
         this.city = city;
         this.postCode = postCode;
         this.street = street;
         this.house = house;
-        this.appUser = appUser;
     }
 
     @Override

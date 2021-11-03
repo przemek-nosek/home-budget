@@ -30,7 +30,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({AssetNotFoundException.class, UsernameNotFoundException.class, ExpenseNotFoundException.class})
+    @ExceptionHandler({AssetNotFoundException.class, UsernameNotFoundException.class, ExpenseNotFoundException.class, PropertyNotFoundException.class})
     protected <T extends RuntimeException> ResponseEntity<ErrorMessage> handleNotFoundException(T ex) {
         ErrorMessage errorMessage = getErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage(), Collections.emptyList());
 
