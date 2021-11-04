@@ -2,10 +2,12 @@ package pl.java.homebudget.dto;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -18,7 +20,7 @@ public class PropertyDto {
     private Long id;
 
     @Min(value = 1, message = "Minimal rooms value is 1")
-    private Integer rooms;
+    private List<RoomDto> rooms;
 
     @NotNull(message = "Single is null.")
     private Boolean single;
@@ -36,6 +38,9 @@ public class PropertyDto {
     private String street;
 
     private String house;
+
+    private Boolean sold = false;
+
 
     @Override
     public boolean equals(Object o) {

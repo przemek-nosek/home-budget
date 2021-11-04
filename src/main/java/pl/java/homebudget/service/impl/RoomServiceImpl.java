@@ -76,7 +76,7 @@ public class RoomServiceImpl implements RoomService {
     private RoomDto saveRoom(RoomDto roomDto, AppUser loggedAppUser) {
         log.info("saveRoom: roomDto {}", roomDto);
 
-        Room room = roomMapper.fromDtoToRoom(roomDto, loggedAppUser);
+        Room room = roomMapper.updateRoomFromRoomDto(roomDto, loggedAppUser);
 
         log.info("saved room {}", room);
 
@@ -93,15 +93,8 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepository.findByIdAndAppUser(id, loggedAppUser)
                 .orElseThrow(() -> new RoomNotFoundException(String.format("Room with given id %d not found", id)));
 
-//        if (Objects.nonNull(roomDto.getRoomSize())) {
-//            room.setRoomSize(roomDto.getRoomSize());
-//        }
-//
-//        if (Objects.nonNull(roomDto.getCost())) {
-//            room.setCost(roomDto.getCost());
-//        }
 
-        Room updatedRoom = roomMapper.fromDtoToRoom(roomDto, room);
+        Room updatedRoom = roomMapper.updateRoomFromRoomDto(roomDto, room);
 
         return roomMapper.fromRoomToDto(updatedRoom);
     }

@@ -87,8 +87,8 @@ public class PropertyServiceImpl implements PropertyService {
 
 
         // TODO: write own validator
-        if (Objects.nonNull(propertyDto.getRooms()) && !propertyDto.getRooms().equals(property.getRooms()) ) {
-            property.setRooms(propertyDto.getRooms());
+        if (Objects.nonNull(propertyDto.getRooms())) {
+
         }
 
         return propertyMapper.fromPropertyToDto(property);

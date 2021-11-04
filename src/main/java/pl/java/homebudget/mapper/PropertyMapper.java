@@ -14,5 +14,4 @@ public interface PropertyMapper {
 
     @Mapping(target = "house")
     PropertyDto fromPropertyToDto(Property property);
-
 }

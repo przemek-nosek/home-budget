@@ -1,9 +1,6 @@
 package pl.java.homebudget.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import pl.java.homebudget.enums.RoomSize;
 
 import javax.persistence.*;
@@ -24,6 +21,12 @@ public class Room extends BaseEntity {
 
     @Column(nullable = false)
     private BigDecimal cost;
+
+    public Room(AppUser appUser, RoomSize roomSize, BigDecimal cost) {
+        super(appUser);
+        this.roomSize = roomSize;
+        this.cost = cost;
+    }
 
     @Override
     public boolean equals(Object o) {

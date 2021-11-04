@@ -30,7 +30,7 @@ public class RoomController {
         return new ResponseEntity<>(savedOrUpdatedRoom, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<RoomDto> makeRoomInactive(@PathVariable Long id) {
         RoomDto inactiveRoom = roomService.makeRoomInactive(id);
 

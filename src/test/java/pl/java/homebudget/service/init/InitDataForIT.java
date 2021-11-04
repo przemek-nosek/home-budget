@@ -111,10 +111,10 @@ public abstract class InitDataForIT {
         assetRepository.save(asset);
     }
 
-    protected void initDatabaseWithPropertyAndUser(AppUser appUser) {
-        Property property = new Property(2, true, "szczecin", "11-111", "nowa", "15", appUser);
-        propertyRepository.save(property);
-    }
+//    protected void initDatabaseWithPropertyAndUser(AppUser appUser) {
+//        Property property = new Property(2, true, "szczecin", "11-111", "nowa", "15", appUser);
+//        propertyRepository.save(property);
+//    }
 
     protected void initDatabaseWithPropertyAndUser(Property property) {
         propertyRepository.save(property);

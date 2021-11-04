@@ -3,6 +3,7 @@ package pl.java.homebudget.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,8 +16,13 @@ import java.util.Objects;
 @Builder
 public class Property extends BaseEntity{
 
-    @Column(nullable = false)
-    private Integer rooms;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(
+            name = "property_id",
+            referencedColumnName= "id"
+    )
+    @ToString.Exclude
+    private List<Room> rooms;
 
     @Column(nullable = false)
     private Boolean single;
@@ -32,7 +38,11 @@ public class Property extends BaseEntity{
 
     private String house;
 
-    public Property(Integer rooms, Boolean single, String city, String postCode, String street, String house, AppUser appUser) {
+    @Column(nullable = false)
+    private Boolean sold = false;
+
+
+    public Property(List<Room> rooms, Boolean single, String city, String postCode, String street, String house, AppUser appUser) {
         super(appUser);
         this.rooms = rooms;
         this.single = single;

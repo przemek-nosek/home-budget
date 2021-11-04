@@ -18,50 +18,50 @@ public class PropertyServiceImplIT extends InitDataForIT {
     private PropertyService propertyService;
 
 
-    @Test
-    void shouldGetAllProperties() {
-        //given
-        AppUser appUser = initDatabaseWithFirstUser();
-        Property property = new Property(2, true, "szczecin", "11-111", "nowa", "15", appUser);
+//    @Test
+//    void shouldGetAllProperties() {
+//        //given
+//        AppUser appUser = initDatabaseWithFirstUser();
+//        Property property = new Property(2, true, "szczecin", "11-111", "nowa", "15", appUser);
+//
+//
+//        initDatabaseWithPropertyAndUser(property);
+//        //when
+//        List<PropertyDto> properties = propertyService.getProperties();
+//
+//        //then
+//        assertThat(properties).isNotEmpty();
+//        PropertyDto propertyDto = properties.get(0);
+//        assertThat(propertyDto.getId()).isNotNull();
+//        assertThat(propertyDto.getRooms()).isEqualTo(2);
+//        assertThat(propertyDto.getSingle()).isTrue();
+//        assertThat(propertyDto.getPostCode()).isEqualTo("11-111");
+//        assertThat(propertyDto.getStreet()).isEqualTo("nowa");
+//        assertThat(propertyDto.getHouse()).isEqualTo("15");
+//
+//    }
 
-
-        initDatabaseWithPropertyAndUser(property);
-        //when
-        List<PropertyDto> properties = propertyService.getProperties();
-
-        //then
-        assertThat(properties).isNotEmpty();
-        PropertyDto propertyDto = properties.get(0);
-        assertThat(propertyDto.getId()).isNotNull();
-        assertThat(propertyDto.getRooms()).isEqualTo(2);
-        assertThat(propertyDto.getSingle()).isTrue();
-        assertThat(propertyDto.getPostCode()).isEqualTo("11-111");
-        assertThat(propertyDto.getStreet()).isEqualTo("nowa");
-        assertThat(propertyDto.getHouse()).isEqualTo("15");
-
-    }
-
-    @Test
-    void shouldAddProperty() {
-        //given
-        initDatabaseWithFirstUser();
-        PropertyDto propertyDto = PropertyDto.builder()
-                .rooms(1)
-                .single(true)
-                .city("Police")
-                .postCode("62-121")
-                .rooms(3)
-                .street("Matyjaka")
-                .house("6")
-                .build();
-
-        //when
-        PropertyDto savedProperty = propertyService.addProperty(propertyDto);
-
-        //then
-        long repositoryCount = propertyRepository.count();
-        assertThat(repositoryCount).isEqualTo(1);
-        assertThat(savedProperty).isNotNull();
-        assertThat(savedProperty.getId()).isNotNull();
-    }
+//    @Test
+//    void shouldAddProperty() {
+//        //given
+//        initDatabaseWithFirstUser();
+//        PropertyDto propertyDto = PropertyDto.builder()
+//                .rooms(1)
+//                .single(true)
+//                .city("Police")
+//                .postCode("62-121")
+//                .rooms(3)
+//                .street("Matyjaka")
+//                .house("6")
+//                .build();
+//
+//        //when
+//        PropertyDto savedProperty = propertyService.addProperty(propertyDto);
+//
+//        //then
+//        long repositoryCount = propertyRepository.count();
+//        assertThat(repositoryCount).isEqualTo(1);
+//        assertThat(savedProperty).isNotNull();
+//        assertThat(savedProperty.getId()).isNotNull();
+//    }
 }
