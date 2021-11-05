@@ -8,9 +8,13 @@ public interface PropertyService {
 
     PropertyDto addProperty(PropertyDto propertyDto);
 
-    List<PropertyDto> getProperties();
+    List<PropertyDto> getUnsoldProperties();
 
     void deleteProperty(PropertyDto propertyDto);
 
     PropertyDto updateProperty(PropertyDto propertyDto);
+
+    void setSoldProperty(Long id);
+
+    List<PropertyDto> getSoldProperties();
 }

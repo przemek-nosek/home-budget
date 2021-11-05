@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface PropertyRepository extends JpaRepository<Property, Long> {
     List<Property> findAllByAppUser(AppUser appUser);
 
+    List<Property> findAllByAppUserAndSold(AppUser appUser, Boolean sold);
+
     void deleteAllByAppUser(AppUser appUser);
 
     boolean existsByIdAndAppUser(Long id, AppUser appUser);

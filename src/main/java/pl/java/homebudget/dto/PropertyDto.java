@@ -2,7 +2,6 @@ package pl.java.homebudget.dto;
 
 import lombok.*;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

@@ -27,7 +27,7 @@ public class RoomController {
     public ResponseEntity<RoomDto> saveOrUpdateRoom(@RequestBody RoomDto roomDto) {
         RoomDto savedOrUpdatedRoom = roomService.saveOrUpdateRoom(roomDto);
 
-        return new ResponseEntity<>(savedOrUpdatedRoom, HttpStatus.OK);
+        return new ResponseEntity<>(savedOrUpdatedRoom, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

@@ -28,12 +28,23 @@ public class PropertyServiceImpl implements PropertyService {
 
 
     @Override
-    public List<PropertyDto> getProperties() {
-        log.info("getProperties");
+    public List<PropertyDto> getUnsoldProperties() {
+        log.info("getUnsoldProperties");
 
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
-        return propertyRepository.findAllByAppUser(loggedAppUser).stream()
+        return propertyRepository.findAllByAppUserAndSold(loggedAppUser, false).stream()
+                .map(propertyMapper::fromPropertyToDto)
+                .toList();
+    }
+
+    @Override
+    public List<PropertyDto> getSoldProperties() {
+        log.info("getSoldProperties");
+
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        return propertyRepository.findAllByAppUserAndSold(loggedAppUser, true).stream()
                 .map(propertyMapper::fromPropertyToDto)
                 .toList();
     }
@@ -86,12 +97,25 @@ public class PropertyServiceImpl implements PropertyService {
                 .orElseThrow(() -> new PropertyNotFoundException(String.format("Property with given id: %d not found", id)));
 
 
-        // TODO: write own validator
+        // TODO: write mapper
         if (Objects.nonNull(propertyDto.getRooms())) {
 
         }
 
         return propertyMapper.fromPropertyToDto(property);
     }
+
+    @Override
+    @Transactional
+    public void setSoldProperty(Long id) {
+        log.info("setSoldProperty");
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+
+        Property property = propertyRepository.findByIdAndAppUser(id, loggedAppUser)
+                .orElseThrow(() -> new PropertyNotFoundException(String.format("Property with given id: %d not found", id)));
+
+        property.setSold(true);
+    }
+
 
 }

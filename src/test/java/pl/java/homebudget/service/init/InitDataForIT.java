@@ -5,16 +5,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AuthenticationRequest;
-import pl.java.homebudget.entity.AppUser;
-import pl.java.homebudget.entity.Asset;
-import pl.java.homebudget.entity.Expense;
-import pl.java.homebudget.entity.Property;
+import pl.java.homebudget.entity.*;
 import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.enums.ExpensesCategory;
-import pl.java.homebudget.repository.AppUserRepository;
-import pl.java.homebudget.repository.AssetRepository;
-import pl.java.homebudget.repository.ExpenseRepository;
-import pl.java.homebudget.repository.PropertyRepository;
+import pl.java.homebudget.enums.RoomSize;
+import pl.java.homebudget.repository.*;
 import pl.java.homebudget.service.impl.AppUserService;
 
 import java.math.BigDecimal;
@@ -38,6 +33,9 @@ public abstract class InitDataForIT {
 
     @Autowired
     protected PropertyRepository propertyRepository;
+
+    @Autowired
+    protected RoomRepository roomRepository;
 
     @Autowired
     protected AppUserService appUserService;
@@ -97,6 +95,11 @@ public abstract class InitDataForIT {
         final String instantFromDateSuffix = "T00:00:00.000Z";
         Expense expense = new Expense(BigDecimal.ZERO, Instant.parse(date + instantFromDateSuffix), ExpensesCategory.OTHER, appUser);
         expenseRepository.save(expense);
+    }
+
+    protected void initDatabaseWithRoomAndUser(AppUser appUser) {
+        Room room = new Room(appUser, RoomSize.ROOM_XXL, BigDecimal.TEN);
+        roomRepository.save(room);
     }
 
     protected void initDatabaseWithExpenseAndUserByCategory(AppUser appUser, String date, ExpensesCategory category) {

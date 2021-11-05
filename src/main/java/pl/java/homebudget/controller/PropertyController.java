@@ -18,8 +18,15 @@ public class PropertyController {
     private final PropertyService propertyService;
 
     @GetMapping
-    public ResponseEntity<List<PropertyDto>> getProperties() {
-        List<PropertyDto> propertyDtoList = propertyService.getProperties();
+    public ResponseEntity<List<PropertyDto>> getUnsoldProperties() {
+        List<PropertyDto> propertyDtoList = propertyService.getUnsoldProperties();
+
+        return new ResponseEntity<>(propertyDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/sold")
+    public ResponseEntity<List<PropertyDto>> getSoldProperties() {
+        List<PropertyDto> propertyDtoList = propertyService.getSoldProperties();
 
         return new ResponseEntity<>(propertyDtoList, HttpStatus.OK);
     }
@@ -28,7 +35,7 @@ public class PropertyController {
     public ResponseEntity<PropertyDto> addProperty(@RequestBody @Valid PropertyDto propertyDto) {
         PropertyDto savedProperty = propertyService.addProperty(propertyDto);
 
-        return new ResponseEntity<>(savedProperty, HttpStatus.OK);
+        return new ResponseEntity<>(savedProperty, HttpStatus.CREATED);
     }
 
     @PutMapping
@@ -41,6 +48,13 @@ public class PropertyController {
     @DeleteMapping
     public ResponseEntity<?> deleteProperty(@RequestBody PropertyDto propertyDto) {
         propertyService.deleteProperty(propertyDto);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/sold/{id}")
+    public ResponseEntity<?> setSoldProperty(@PathVariable Long id) {
+        propertyService.setSoldProperty(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
