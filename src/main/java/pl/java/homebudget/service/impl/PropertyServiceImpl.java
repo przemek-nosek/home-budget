@@ -28,8 +28,6 @@ public class PropertyServiceImpl implements PropertyService {
     private final PropertyRepository propertyRepository;
     private final PropertyMapper propertyMapper = Mappers.getMapper(PropertyMapper.class);
     private final UserLoggedInfo userLoggedInfo;
-
-
     private final RoomMapper roomMapper;
     private final RoomRepository roomRepository;
 
@@ -64,7 +62,7 @@ public class PropertyServiceImpl implements PropertyService {
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
         Property property = propertyMapper.fromDtoToProperty(propertyDto, loggedAppUser);
-
+        property.getRooms().forEach(room -> room.setAppUser(loggedAppUser));
         Property savedProperty = propertyRepository.save(property);
         log.info("Property added");
 
@@ -112,6 +110,9 @@ public class PropertyServiceImpl implements PropertyService {
         property.getRooms().removeAll(rooms);
 
         List<Room> updatedRooms = roomMapper.updateRoomFromRoomDto(propertyDto.getRooms(), rooms);
+        updatedRooms.forEach(room -> room.setAppUser(loggedAppUser));
+
+        roomRepository.saveAll(updatedRooms);
 
         Property fromDto = propertyMapper.updatePropertyFromDto(propertyDto, updatedRooms, property);
 

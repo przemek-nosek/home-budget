@@ -18,7 +18,6 @@ import java.util.Objects;
 public class PropertyDto {
     private Long id;
 
-    @Min(value = 1, message = "Minimal rooms value is 1")
     private List<RoomDto> rooms;
 
     @NotNull(message = "Single is null.")

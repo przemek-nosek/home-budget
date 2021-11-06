@@ -16,7 +16,7 @@ import java.util.Objects;
 @Builder
 public class Property extends BaseEntity{
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(
             name = "property_id",
             referencedColumnName= "id"

@@ -116,6 +116,9 @@ public class PropertyServiceImplIT extends InitDataForIT {
 
         Property property = new Property(appUser, rooms, true, "city", "postCode", "street", "house", false);
 
+        initDatabaseWithRoomAndUser(room);
+        initDatabaseWithRoomAndUser(room2);
+        initDatabaseWithRoomAndUser(room3);
         initDatabaseWithPropertyAndUser(property);
 
         assertThat(roomRepository.count()).isEqualTo(3L);
