@@ -9,13 +9,17 @@ import pl.java.homebudget.dto.PropertyDto;
 import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Property;
+import pl.java.homebudget.entity.Room;
 import pl.java.homebudget.exception.PropertyNotFoundException;
 import pl.java.homebudget.mapper.PropertyMapper;
+import pl.java.homebudget.mapper.RoomMapper;
 import pl.java.homebudget.repository.PropertyRepository;
+import pl.java.homebudget.repository.RoomRepository;
 import pl.java.homebudget.service.PropertyService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +29,10 @@ public class PropertyServiceImpl implements PropertyService {
     private final PropertyRepository propertyRepository;
     private final PropertyMapper propertyMapper = Mappers.getMapper(PropertyMapper.class);
     private final UserLoggedInfo userLoggedInfo;
+
+
+    private final RoomMapper roomMapper;
+    private final RoomRepository roomRepository;
 
 
     @Override
@@ -97,12 +105,20 @@ public class PropertyServiceImpl implements PropertyService {
                 .orElseThrow(() -> new PropertyNotFoundException(String.format("Property with given id: %d not found", id)));
 
 
-        // TODO: write mapper
-        if (Objects.nonNull(propertyDto.getRooms())) {
+        List<Room> rooms = propertyDto.getRooms().stream()
+                .map(roomDto -> roomRepository.findByIdAndAppUser(roomDto.getId(), loggedAppUser).get())
+                .collect(Collectors.toList());
 
-        }
 
-        return propertyMapper.fromPropertyToDto(property);
+        property.getRooms().removeAll(rooms);
+
+        List<Room> updatedRooms = roomMapper.updateRoomFromRoomDto(propertyDto.getRooms(), rooms);
+
+        Property fromDto = propertyMapper.updatePropertyFromDto(propertyDto, updatedRooms, property);
+
+        PropertyDto propertyDto1 = propertyMapper.fromPropertyToDto(fromDto);
+
+        return propertyDto1;
     }
 
     @Override

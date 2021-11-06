@@ -42,7 +42,7 @@ public class Property extends BaseEntity{
     private Boolean sold = false;
 
 
-    public Property(List<Room> rooms, Boolean single, String city, String postCode, String street, String house, AppUser appUser) {
+    public Property(AppUser appUser, List<Room> rooms, Boolean single, String city, String postCode, String street, String house, Boolean sold) {
         super(appUser);
         this.rooms = rooms;
         this.single = single;
@@ -50,6 +50,7 @@ public class Property extends BaseEntity{
         this.postCode = postCode;
         this.street = street;
         this.house = house;
+        this.sold = sold;
     }
 
     @Override

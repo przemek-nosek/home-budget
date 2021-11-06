@@ -76,7 +76,7 @@ public class RoomServiceImpl implements RoomService {
     private RoomDto saveRoom(RoomDto roomDto, AppUser loggedAppUser) {
         log.info("saveRoom: roomDto {}", roomDto);
 
-        Room room = roomMapper.updateRoomFromRoomDto(roomDto, loggedAppUser);
+        Room room = roomMapper.fromRoomToDto(roomDto, loggedAppUser);
 
         log.info("saved room {}", room);
 

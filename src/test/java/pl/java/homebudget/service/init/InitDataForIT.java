@@ -97,9 +97,10 @@ public abstract class InitDataForIT {
         expenseRepository.save(expense);
     }
 
-    protected void initDatabaseWithRoomAndUser(AppUser appUser) {
+    protected Room initDatabaseWithRoomAndUser(AppUser appUser) {
         Room room = new Room(appUser, RoomSize.ROOM_XXL, BigDecimal.TEN);
         roomRepository.save(room);
+        return room;
     }
 
     protected void initDatabaseWithExpenseAndUserByCategory(AppUser appUser, String date, ExpensesCategory category) {
@@ -114,10 +115,14 @@ public abstract class InitDataForIT {
         assetRepository.save(asset);
     }
 
-//    protected void initDatabaseWithPropertyAndUser(AppUser appUser) {
-//        Property property = new Property(2, true, "szczecin", "11-111", "nowa", "15", appUser);
-//        propertyRepository.save(property);
-//    }
+    protected void initDatabaseWithPropertyAndUser(AppUser appUser, Boolean sold) {
+        Property property = new Property(appUser, new ArrayList<>(),true, "szczecin", "11-111", "nowa", "15",  sold);
+        propertyRepository.save(property);
+    }
+
+    protected Room initDatabaseWithRoomAndUser(Room room) {
+        return roomRepository.save(room);
+    }
 
     protected void initDatabaseWithPropertyAndUser(Property property) {
         propertyRepository.save(property);
