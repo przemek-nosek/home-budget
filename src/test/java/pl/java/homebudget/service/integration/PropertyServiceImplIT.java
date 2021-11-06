@@ -9,14 +9,13 @@ import pl.java.homebudget.entity.Property;
 import pl.java.homebudget.entity.Room;
 import pl.java.homebudget.enums.RoomSize;
 import pl.java.homebudget.service.PropertyService;
-import pl.java.homebudget.service.RoomService;
 import pl.java.homebudget.service.init.InitDataForIT;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PropertyServiceImplIT extends InitDataForIT {
@@ -100,40 +99,10 @@ public class PropertyServiceImplIT extends InitDataForIT {
         assertThat(propertyRepository.count()).isEqualTo(0L);
     }
 
+
+
     @Test
     void shouldUpdateProperty() {
-        //given
-        AppUser appUser = initDatabaseWithFirstUser();
-        initDatabaseWithPropertyAndUser(appUser, false);
-        Room room = initDatabaseWithRoomAndUser(appUser);
-        assertThat(propertyRepository.count()).isEqualTo(1L);
-        Property property = propertyRepository.findAllByAppUser(appUser).get(0);
-
-        PropertyDto propertyDto = new PropertyDto(
-                property.getId(),
-                List.of(new RoomDto(room.getId(), RoomSize.ROOM_S, BigDecimal.TEN)),
-                property.getSingle(),
-                "szczecin miasto",
-                property.getPostCode(),
-                property.getStreet(),
-                "house house",
-                false
-        );
-
-        //when
-        PropertyDto updatedProperty = propertyService.updateProperty(propertyDto);
-
-        //then
-        assertThat(updatedProperty.getId()).isEqualTo(propertyDto.getId());
-        assertThat(updatedProperty.getCity()).isEqualTo(propertyDto.getCity());
-        assertThat(updatedProperty.getHouse()).isEqualTo(propertyDto.getHouse());
-        assertThat(updatedProperty.getRooms().size()).isEqualTo(1);
-
-    }
-
-
-    @Test
-    void name() {
         //given
         AppUser appUser = initDatabaseWithFirstUser();
 
@@ -148,6 +117,9 @@ public class PropertyServiceImplIT extends InitDataForIT {
         Property property = new Property(appUser, rooms, true, "city", "postCode", "street", "house", false);
 
         initDatabaseWithPropertyAndUser(property);
+
+        assertThat(roomRepository.count()).isEqualTo(3L);
+        assertThat(propertyRepository.count()).isEqualTo(1L);
 
         Room room4 = roomRepository.findAllByAppUser(appUser)
                 .stream().filter(room1 -> room1.getCost().equals(BigDecimal.ZERO))
@@ -169,6 +141,29 @@ public class PropertyServiceImplIT extends InitDataForIT {
 
         //when
         PropertyDto updateProperty = propertyService.updateProperty(propertyDto);
+
+        //then
+        assertThat(updateProperty.getRooms()).hasSize(2);
+        assertThat(updateProperty.getRooms()).containsExactly(roomDto, roomDto2);
     }
 
+    @Test
+    void shouldSetSoldProperty() {
+        //given
+        AppUser appUser = initDatabaseWithFirstUser();
+        initDatabaseWithPropertyAndUser(appUser, false);
+
+        Property property = propertyRepository.findAllByAppUser(appUser).get(0);
+        assertThat(property.getSold()).isFalse();
+
+        //when
+        propertyService.setSoldProperty(property.getId());
+
+        //then
+        Property soldProperty = propertyRepository.findAllByAppUser(appUser).get(0);
+        assertThat(soldProperty.getSold()).isTrue();
+        assertThat(soldProperty.getCity()).isEqualTo(property.getCity());
+        assertThat(soldProperty.getHouse()).isEqualTo(property.getHouse());
+        assertThat(soldProperty.getStreet()).isEqualTo(property.getStreet());
+    }
 }

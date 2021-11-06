@@ -18,7 +18,6 @@ import pl.java.homebudget.repository.RoomRepository;
 import pl.java.homebudget.service.PropertyService;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -116,9 +115,7 @@ public class PropertyServiceImpl implements PropertyService {
 
         Property fromDto = propertyMapper.updatePropertyFromDto(propertyDto, updatedRooms, property);
 
-        PropertyDto propertyDto1 = propertyMapper.fromPropertyToDto(fromDto);
-
-        return propertyDto1;
+        return propertyMapper.fromPropertyToDto(fromDto);
     }
 
     @Override
@@ -132,6 +129,4 @@ public class PropertyServiceImpl implements PropertyService {
 
         property.setSold(true);
     }
-
-
 }
