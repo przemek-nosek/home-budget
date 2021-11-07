@@ -16,10 +16,13 @@ import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.AssetService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @AllArgsConstructor
@@ -30,7 +33,6 @@ public class AssetServiceImpl implements AssetService {
     private final AssetMapper assetMapper = Mappers.getMapper(AssetMapper.class);
     private final UserLoggedInfo userLoggedInfo;
     private final FilterRange<Asset> assetFilterRange;
-
 
     @Override
     public List<AssetDto> getAssets() {
@@ -50,11 +52,32 @@ public class AssetServiceImpl implements AssetService {
 
         AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
         Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
-        asset.setAppUser(loggedUser);
 
         Asset savedAsset = assetRepository.save(asset);
         log.info("Asset added");
         return assetMapper.fromAssetToDto(savedAsset);
+    }
+
+    @Override
+    @Transactional
+    public List<AssetDto> addAllAssets(List<AssetDto> assetDtos) {
+        log.info("addAllAssets");
+        log.debug("assetDtos {}", assetDtos);
+
+        AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
+
+        List<Asset> assets = new ArrayList<>();
+
+        assetDtos.forEach(assetDto -> {
+            Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
+            asset.setAppUser(loggedUser);
+            Asset savedAsset = assetRepository.save(asset);
+            assets.add(savedAsset);
+        });
+
+        return assets.stream()
+                .map(assetMapper::fromAssetToDto)
+                .toList();
     }
 
     @Override
@@ -111,7 +134,7 @@ public class AssetServiceImpl implements AssetService {
         return assetRepository.findAllByCategoryAndAppUser(assetCategory, loggedAppUser)
                 .stream()
                 .map(assetMapper::fromAssetToDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
@@ -134,6 +157,8 @@ public class AssetServiceImpl implements AssetService {
         return assetFilterRange.getAllByFilter(loggedAppUser, filters)
                 .stream()
                 .map(assetMapper::fromAssetToDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
+
+
 }

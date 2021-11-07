@@ -88,7 +88,7 @@ public class AssetServiceImplIT extends InitDataForIT {
         initDatabaseWithTwoUsersAndAssets();
         Asset asset = assetRepository.findAll().get(0);
 
-        AssetDto assetDto = new AssetDto(asset.getId(), BigDecimal.valueOf(51283L), Instant.now(), AssetCategory.BONUS);
+        AssetDto assetDto = new AssetDto(asset.getId(), BigDecimal.valueOf(51283L), Instant.now(), AssetCategory.BONUS, "description");
 
         //when
         AssetDto updateAsset = assetService.updateAsset(assetDto);
@@ -103,7 +103,7 @@ public class AssetServiceImplIT extends InitDataForIT {
         //given
         initDatabaseWithFirstUser();
         Long notExistsId = -52L;
-        AssetDto assetDto = new AssetDto(notExistsId, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
+        AssetDto assetDto = new AssetDto(notExistsId, BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, "description");
 
         //when
         //then

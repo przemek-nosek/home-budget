@@ -49,6 +49,13 @@ public class AssetController {
         return new ResponseEntity<>(addedAsset, HttpStatus.CREATED);
     }
 
+    @PostMapping("/all")
+    public ResponseEntity<List<AssetDto>> addAllAssets(@RequestBody List<AssetDto> assetDtos) {
+        List<AssetDto> addedAssets = assetService.addAllAssets(assetDtos);
+
+        return new ResponseEntity<>(addedAssets, HttpStatus.CREATED);
+    }
+
     @DeleteMapping
     public ResponseEntity<?> deleteAsset(@RequestBody AssetDto assetDto) {
         assetService.deleteAsset(assetDto);

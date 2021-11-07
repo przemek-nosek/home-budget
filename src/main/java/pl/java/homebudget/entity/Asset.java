@@ -28,6 +28,8 @@ public class Asset extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private AssetCategory category;
 
+    private String description;
+
     public Asset(BigDecimal amount, Instant incomeDate, AssetCategory category, AppUser appUser) {
         super(appUser);
         this.amount = amount;

@@ -128,7 +128,7 @@ class AssetServiceImplTest {
     @Test
     void updateAsset_successfully() {
         //given
-        AssetDto assetDto = new AssetDto(1L, BigDecimal.TEN, Instant.now(), AssetCategory.BONUS);
+        AssetDto assetDto = new AssetDto(1L, BigDecimal.TEN, Instant.now(), AssetCategory.BONUS, "description");
         AppUser appUser = new AppUser("username", "password");
         Asset asset = new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, appUser);
 //        asset.setId(1L);
@@ -149,7 +149,7 @@ class AssetServiceImplTest {
     @Test
     void updateAsset_fails_andThrowsAssetNotFoundException() {
         //given
-        AssetDto assetDto = new AssetDto(-1L, BigDecimal.TEN, Instant.now(), AssetCategory.BONUS);
+        AssetDto assetDto = new AssetDto(-1L, BigDecimal.TEN, Instant.now(), AssetCategory.BONUS, "description");
         given(assetRepository.findByIdAndAppUser(anyLong(), any())).willThrow(AssetNotFoundException.class);
 
         //when

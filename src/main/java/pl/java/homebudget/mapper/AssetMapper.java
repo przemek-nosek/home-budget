@@ -10,6 +10,7 @@ import pl.java.homebudget.entity.Asset;
 public interface AssetMapper {
 
     @Mapping(source = "dto.id", target = "id")
+    @Mapping(source = "appUser", target = "appUser")
     Asset fromDtoToAsset(AssetDto dto, AppUser appUser);
 
     @Mapping(target = "amount")

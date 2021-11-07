@@ -20,4 +20,6 @@ public interface AssetService {
     void deleteAssetsByAppUser();
 
     List<AssetDto> getFilteredAssets(Map<String, String> filters);
+
+    List<AssetDto> addAllAssets(List<AssetDto> assetDtos);
 }

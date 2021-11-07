@@ -28,10 +28,18 @@ public class AssetDto {
     @NotNull(message = "Category is null.")
     private AssetCategory category;
 
+    private String description;
+
     public AssetDto(BigDecimal amount, Instant incomeDate, AssetCategory category) {
         this.amount = amount;
         this.incomeDate = incomeDate;
         this.category = category;
+    }
+
+    public AssetDto(BigDecimal amount, AssetCategory category, String description) {
+        this.amount = amount;
+        this.category = category;
+        this.description = description;
     }
 
     @Override
