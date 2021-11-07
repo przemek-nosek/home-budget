@@ -33,26 +33,16 @@ public class PropertyServiceImpl implements PropertyService {
 
 
     @Override
-    public List<PropertyDto> getUnsoldProperties() {
+    public List<PropertyDto> getAllProperties(boolean sold) {
         log.info("getUnsoldProperties");
 
         AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
 
-        return propertyRepository.findAllByAppUserAndSold(loggedAppUser, false).stream()
+        return propertyRepository.findAllByAppUserAndSold(loggedAppUser, sold).stream()
                 .map(propertyMapper::fromPropertyToDto)
                 .toList();
     }
 
-    @Override
-    public List<PropertyDto> getSoldProperties() {
-        log.info("getSoldProperties");
-
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
-
-        return propertyRepository.findAllByAppUserAndSold(loggedAppUser, true).stream()
-                .map(propertyMapper::fromPropertyToDto)
-                .toList();
-    }
 
     @Override
     public PropertyDto addProperty(PropertyDto propertyDto) {
@@ -69,25 +59,7 @@ public class PropertyServiceImpl implements PropertyService {
         return propertyMapper.fromPropertyToDto(savedProperty);
     }
 
-    @Override
-    @Transactional
-    public void deleteProperty(PropertyDto propertyDto) { // TODO: WRITE IT TESTS
-        log.info("deleteProperty");
-        log.debug("propertyDto {}", propertyDto);
 
-        Long id = propertyDto.getId();
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
-
-        boolean existsById = propertyRepository.existsByIdAndAppUser(id, loggedAppUser);
-
-        if (!existsById) {
-            throw new PropertyNotFoundException(String.format("Property with given id: %d not found", id));
-        }
-
-        Property property = propertyMapper.fromDtoToProperty(propertyDto, loggedAppUser);
-
-        propertyRepository.delete(property);
-    }
 
     @Override
     @Transactional

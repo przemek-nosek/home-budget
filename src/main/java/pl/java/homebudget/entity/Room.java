@@ -22,6 +22,9 @@ public class Room extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal cost;
 
+    @Column(nullable = false)
+    private Boolean rent = false;
+
     public Room(AppUser appUser, RoomSize roomSize, BigDecimal cost) {
         super(appUser);
         this.roomSize = roomSize;

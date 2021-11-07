@@ -33,7 +33,7 @@ public class PropertyServiceImplIT extends InitDataForIT {
         initDatabaseWithPropertyAndUser(appUser, true);
 
         //when
-        List<PropertyDto> unsoldProperties = propertyService.getUnsoldProperties();
+        List<PropertyDto> unsoldProperties = propertyService.getAllProperties(false);
 
         //then
         assertThat(unsoldProperties).hasSize(3);
@@ -49,7 +49,7 @@ public class PropertyServiceImplIT extends InitDataForIT {
         initDatabaseWithPropertyAndUser(appUser, true);
 
         //when
-        List<PropertyDto> soldProperties = propertyService.getSoldProperties();
+        List<PropertyDto> soldProperties = propertyService.getAllProperties(true);
 
         //then
         assertThat(soldProperties).hasSize(2);
@@ -71,35 +71,6 @@ public class PropertyServiceImplIT extends InitDataForIT {
         assertThat(savedProperty.getPostCode()).isEqualTo(propertyDto.getPostCode());
         assertThat(savedProperty.getCity()).isEqualTo(propertyDto.getCity());
     }
-
-    @Test
-    void shouldDeleteProperty() {
-        //given
-        AppUser appUser = initDatabaseWithFirstUser();
-        initDatabaseWithPropertyAndUser(appUser, false);
-        assertThat(propertyRepository.count()).isEqualTo(1L);
-        Property property = propertyRepository.findAllByAppUser(appUser).get(0);
-
-        PropertyDto propertyDto = new PropertyDto(
-                property.getId(),
-                new ArrayList<>(),
-                property.getSingle(),
-                property.getCity(),
-                property.getPostCode(),
-                property.getStreet(),
-                property.getHouse(),
-                false
-        );
-
-
-        //when
-        propertyService.deleteProperty(propertyDto);
-
-        //then
-        assertThat(propertyRepository.count()).isEqualTo(0L);
-    }
-
-
 
     @Test
     void shouldUpdateProperty() {
@@ -133,8 +104,8 @@ public class PropertyServiceImplIT extends InitDataForIT {
                 .collect(Collectors.toList()).get(0);
 
 
-        RoomDto roomDto = new RoomDto(room4.getId(), room4.getRoomSize(), BigDecimal.valueOf(1000000));
-        RoomDto roomDto2 = new RoomDto(room5.getId(), room5.getRoomSize(), BigDecimal.valueOf(9990000));
+        RoomDto roomDto = new RoomDto(room4.getId(), room4.getRoomSize(), BigDecimal.valueOf(1000000), false);
+        RoomDto roomDto2 = new RoomDto(room5.getId(), room5.getRoomSize(), BigDecimal.valueOf(9990000), false);
         List<RoomDto> roomDtoList = new ArrayList<>();
         roomDtoList.add(roomDto);
         roomDtoList.add(roomDto2);

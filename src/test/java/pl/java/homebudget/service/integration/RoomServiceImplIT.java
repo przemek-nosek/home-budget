@@ -100,7 +100,7 @@ public class RoomServiceImplIT extends InitDataForIT {
         initDatabaseWithRoomAndUser(appUser);
         Room room = roomRepository.findAllByAppUser(appUser).get(0);
 
-        RoomDto roomDto = new RoomDto(room.getId(), RoomSize.ROOM_S, BigDecimal.TEN);
+        RoomDto roomDto = new RoomDto(room.getId(), RoomSize.ROOM_S, BigDecimal.TEN, false);
         long repositoryCount = roomRepository.count();
         assertThat(repositoryCount).isEqualTo(1L);
 

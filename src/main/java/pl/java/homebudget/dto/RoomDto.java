@@ -16,6 +16,7 @@ public class RoomDto {
     private Long id;
     private RoomSize roomSize;
     private BigDecimal cost;
+    private Boolean rent = false;
 
     public RoomDto(RoomSize roomSize, BigDecimal cost) {
         this.roomSize = roomSize;

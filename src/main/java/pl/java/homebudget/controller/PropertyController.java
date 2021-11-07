@@ -19,14 +19,14 @@ public class PropertyController {
 
     @GetMapping
     public ResponseEntity<List<PropertyDto>> getUnsoldProperties() {
-        List<PropertyDto> propertyDtoList = propertyService.getUnsoldProperties();
+        List<PropertyDto> propertyDtoList = propertyService.getAllProperties(false);
 
         return new ResponseEntity<>(propertyDtoList, HttpStatus.OK);
     }
 
     @GetMapping("/sold")
     public ResponseEntity<List<PropertyDto>> getSoldProperties() {
-        List<PropertyDto> propertyDtoList = propertyService.getSoldProperties();
+        List<PropertyDto> propertyDtoList = propertyService.getAllProperties(true);
 
         return new ResponseEntity<>(propertyDtoList, HttpStatus.OK);
     }
@@ -45,12 +45,6 @@ public class PropertyController {
         return new ResponseEntity<>(updatedProperty, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteProperty(@RequestBody PropertyDto propertyDto) {
-        propertyService.deleteProperty(propertyDto);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 
     @DeleteMapping("/sold/{id}")
     public ResponseEntity<?> setSoldProperty(@PathVariable Long id) {
