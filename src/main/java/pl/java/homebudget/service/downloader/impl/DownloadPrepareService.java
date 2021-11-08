@@ -13,17 +13,12 @@ class DownloadPrepareService {
 
     public void prepareToDownload(HttpServletResponse response, StringBuilder builder, String filename) {
         response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment;filename="+filename+".csv");
+        response.setHeader("Content-Disposition", "attachment;filename=" + filename + ".csv");
 
-        try {
-            System.out.println(builder);
-            PrintWriter printWriter = new PrintWriter(response.getWriter());
+        try (PrintWriter printWriter = new PrintWriter(response.getWriter())) {
             printWriter.println(builder);
-            printWriter.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

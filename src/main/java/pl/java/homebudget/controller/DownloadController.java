@@ -1,13 +1,16 @@
 package pl.java.homebudget.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.enums.DownloadSetting;
 import pl.java.homebudget.service.downloader.DownloadService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/download")
@@ -16,13 +19,16 @@ public class DownloadController {
 
     private final DownloadService downloadService;
 
+
     @GetMapping("/assets")
-    public void downloadAssets(HttpServletResponse response) {
-        downloadService.addToResponse(response, DownloadSetting.ASSET);
+    @ResponseStatus(HttpStatus.OK)
+    public void downloadAssets(@RequestParam Map<String, String> filters, HttpServletResponse response) {
+        downloadService.addToResponse(filters, response, DownloadSetting.ASSET);
     }
 
     @GetMapping("/expenses")
-    public void downloadExpenses(HttpServletResponse response) {
-        downloadService.addToResponse(response, DownloadSetting.EXPENSE);
+    @ResponseStatus(HttpStatus.OK)
+    public void downloadExpenses(@RequestParam Map<String, String> filters, HttpServletResponse response) {
+        downloadService.addToResponse(filters, response, DownloadSetting.EXPENSE);
     }
 }

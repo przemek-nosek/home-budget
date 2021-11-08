@@ -18,7 +18,6 @@ public class ExpenseFilterRange extends FilterRange<Expense> {
 
     private final ExpenseRepository expenseRepository;
 
-
     @Override
     protected List<Expense> getEntitiesWithinDate(AppUser appUser, Instant from, Instant to, String category) {
         List<ExpensesCategory> expensesCategories = mapStringToList(category);

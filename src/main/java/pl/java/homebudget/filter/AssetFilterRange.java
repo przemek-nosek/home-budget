@@ -20,7 +20,9 @@ public class AssetFilterRange extends FilterRange<Asset>{
 
     @Override
     protected List<Asset> getEntitiesWithinDate(AppUser appUser, Instant from, Instant to, String category) {
-        return assetRepository.findAllByIncomeDateBetweenAndAppUserAndCategoryIn(from, to, appUser, mapStringToList(category));
+        List<AssetCategory> categories = mapStringToList(category);
+
+        return assetRepository.findAllByIncomeDateBetweenAndAppUserAndCategoryIn(from, to, appUser, categories);
     }
 
     private List<AssetCategory> mapStringToList(String category) {
