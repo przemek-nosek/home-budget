@@ -8,18 +8,26 @@ import java.util.List;
 @Service
 class ExpenseDownloadBuilder {
 
-    private final static String SEPARATOR = ";";
-
-    public StringBuilder prepareExpense(List<ExpenseDto> dtos) {
+    public StringBuilder prepareExpense(List<ExpenseDto> dtos, String separator) {
         StringBuilder builder = new StringBuilder();
+        builder
+                .append("Amount")
+                .append(separator)
+                .append("Category")
+                .append(separator)
+                .append("Purchase Date")
+                .append(separator)
+                .append("Description")
+                .append("\n");
+
 
         dtos.forEach(expense -> {
             builder.append(expense.getAmount());
-            builder.append(SEPARATOR);
+            builder.append(separator);
             builder.append(expense.getCategory());
-            builder.append(SEPARATOR);
+            builder.append(separator);
             builder.append(expense.getPurchaseDate());
-            builder.append(SEPARATOR);
+            builder.append(separator);
             builder.append(expense.getDescription());
             builder.append("\n");
         });

@@ -3,6 +3,7 @@ package pl.java.homebudget.service.downloader.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pl.java.homebudget.config.DownloadConfigurer;
 import pl.java.homebudget.dto.AssetDto;
 import pl.java.homebudget.dto.ExpenseDto;
 import pl.java.homebudget.enums.DownloadSetting;
@@ -23,6 +24,7 @@ public class DownloadServiceImpl implements DownloadService {
     private final ExpenseDownloadBuilder expenseDownloadBuilder;
     private final ExpenseService expenseService;
     private final DownloadPrepareService downloadPrepareService;
+    private final DownloadConfigurer downloadConfigurer;
 
 
     public void addToResponse(HttpServletResponse response, DownloadSetting downloadSetting) {
@@ -35,19 +37,21 @@ public class DownloadServiceImpl implements DownloadService {
 
     private void prepareAsset(HttpServletResponse response) {
         List<AssetDto> dtos = assetService.getAssets();
-        StringBuilder builder = assetDownloadBuilder.prepareAsset(dtos);
-        String filename = "assets";
+        String separator = downloadConfigurer.getFileSeparator().getSeparator();
+
+        StringBuilder builder = assetDownloadBuilder.prepareAsset(dtos, separator);
+        String filename = downloadConfigurer.getAssetFileName();
 
         downloadPrepareService.prepareToDownload(response, builder, filename);
     }
 
     private void prepareExpense(HttpServletResponse response) {
         List<ExpenseDto> dtos = expenseService.getExpenses();
-        StringBuilder builder = expenseDownloadBuilder.prepareExpense(dtos);
-        String filename = "expenses";
+        String separator = downloadConfigurer.getFileSeparator().getSeparator();
+
+        StringBuilder builder = expenseDownloadBuilder.prepareExpense(dtos, separator);
+        String filename = downloadConfigurer.getExpenseFileName();
 
         downloadPrepareService.prepareToDownload(response, builder, filename);
     }
-
-
 }

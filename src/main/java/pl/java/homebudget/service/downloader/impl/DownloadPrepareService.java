@@ -1,12 +1,11 @@
 package pl.java.homebudget.service.downloader.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Service
 @RequiredArgsConstructor
@@ -16,20 +15,15 @@ class DownloadPrepareService {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment;filename="+filename+".csv");
 
-        try (CSVPrinter printer = new CSVPrinter(response.getWriter(), CSVFormat.DEFAULT)) {
-
-            String[] content = builder.toString().split("\n");
-
-            for (String s : content) {
-                String[] split = s.split(";");
-                for (String s1 : split) {
-                    printer.print(s1);
-                }
-                printer.println();
-            }
+        try {
+            System.out.println(builder);
+            PrintWriter printWriter = new PrintWriter(response.getWriter());
+            printWriter.println(builder);
+            printWriter.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
