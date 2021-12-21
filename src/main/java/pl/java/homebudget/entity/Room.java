@@ -31,6 +31,13 @@ public class Room extends BaseEntity {
         this.cost = cost;
     }
 
+    public Room(AppUser appUser, RoomSize roomSize, BigDecimal cost, Boolean rent) {
+        super(appUser);
+        this.roomSize = roomSize;
+        this.cost = cost;
+        this.rent = rent;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

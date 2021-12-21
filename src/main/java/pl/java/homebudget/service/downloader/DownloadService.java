@@ -6,5 +6,5 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public interface DownloadService {
-    void addToResponse(Map<String, String> filters, HttpServletResponse response, DownloadSetting asset);
+    void downloadFile(Map<String, String> filters, HttpServletResponse response, DownloadSetting asset);
 }

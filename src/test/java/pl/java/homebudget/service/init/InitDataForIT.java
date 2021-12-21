@@ -124,8 +124,12 @@ public abstract class InitDataForIT {
         return roomRepository.save(room);
     }
 
-    protected void initDatabaseWithPropertyAndUser(Property property) {
-        propertyRepository.save(property);
+    protected List<Room> initDatabaseWithRoomsAndUser(List<Room> rooms) {
+        return roomRepository.saveAll(rooms);
+    }
+
+    protected Property initDatabaseWithPropertyAndUser(Property property) {
+        return propertyRepository.save(property);
     }
 
     protected void initDatabaseWithTwoUsersAndRelatedData() {

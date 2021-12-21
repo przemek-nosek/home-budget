@@ -14,21 +14,24 @@ import pl.java.homebudget.service.downloader.DownloadService;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class DownloadServiceImpl implements DownloadService {
 
-    private final AssetDownloadBuilder assetDownloadBuilder;
     private final AssetService assetService;
-    private final ExpenseDownloadBuilder expenseDownloadBuilder;
     private final ExpenseService expenseService;
+
+    private final AssetDownloadBuilder assetDownloadBuilder;
+    private final ExpenseDownloadBuilder expenseDownloadBuilder;
     private final DownloadPrepareService downloadPrepareService;
+
     private final DownloadConfigurer downloadConfigurer;
 
 
-    public void addToResponse(Map<String, String> filters, HttpServletResponse response, DownloadSetting downloadSetting) {
+    public void downloadFile(Map<String, String> filters, HttpServletResponse response, DownloadSetting downloadSetting) {
         switch (downloadSetting) {
             case ASSET -> prepareAsset(filters, response);
             case EXPENSE -> prepareExpense(filters, response);
@@ -38,21 +41,39 @@ public class DownloadServiceImpl implements DownloadService {
 
     private void prepareAsset(Map<String, String> filters, HttpServletResponse response) {
         String separator = downloadConfigurer.getFileSeparator().getSeparator();
-        List<AssetDto> dtos = assetService.getFilteredAssets(filters);
+
+        List<AssetDto> dtos = getAssets(filters);
 
         StringBuilder builder = assetDownloadBuilder.prepareAsset(dtos, separator);
         String filename = downloadConfigurer.getAssetFileName();
 
-        downloadPrepareService.prepareToDownload(response, builder, filename);
+        downloadPrepareService.prepareResponseToDownload(response, builder, filename);
     }
 
     private void prepareExpense(Map<String, String> filters, HttpServletResponse response) {
-        List<ExpenseDto> dtos = expenseService.getFilteredExpenses(filters);
         String separator = downloadConfigurer.getFileSeparator().getSeparator();
+
+        List<ExpenseDto> dtos = getExpenses(filters);
 
         StringBuilder builder = expenseDownloadBuilder.prepareExpense(dtos, separator);
         String filename = downloadConfigurer.getExpenseFileName();
 
-        downloadPrepareService.prepareToDownload(response, builder, filename);
+        downloadPrepareService.prepareResponseToDownload(response, builder, filename);
     }
+
+    private List<AssetDto> getAssets(Map<String, String> filters) {
+        if (Objects.isNull(filters)) {
+            return assetService.getAssets();
+        }
+        return assetService.getFilteredAssets(filters);
+    }
+
+
+    private List<ExpenseDto> getExpenses(Map<String, String> filters) {
+        if (Objects.isNull(filters)) {
+            return expenseService.getExpenses();
+        }
+        return expenseService.getFilteredExpenses(filters);
+    }
+
 }

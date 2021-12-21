@@ -14,6 +14,7 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AssetDto {
 
     private Long id;
@@ -41,6 +42,7 @@ public class AssetDto {
         this.category = category;
         this.description = description;
     }
+
 
     @Override
     public boolean equals(Object o) {

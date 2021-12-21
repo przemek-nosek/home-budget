@@ -11,14 +11,14 @@ import java.io.PrintWriter;
 @RequiredArgsConstructor
 class DownloadPrepareService {
 
-    public void prepareToDownload(HttpServletResponse response, StringBuilder builder, String filename) {
+    public void prepareResponseToDownload(HttpServletResponse response, StringBuilder builder, String filename) {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment;filename=" + filename + ".csv");
 
         try (PrintWriter printWriter = new PrintWriter(response.getWriter())) {
             printWriter.println(builder);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("An error occurred while trying to create CSV file: " + e.getMessage());
         }
     }
 }

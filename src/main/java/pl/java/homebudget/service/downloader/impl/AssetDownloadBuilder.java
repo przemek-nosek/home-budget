@@ -9,19 +9,10 @@ import java.util.List;
 class AssetDownloadBuilder {
 
     public StringBuilder prepareAsset(List<AssetDto> dtos, String separator) {
-        StringBuilder builder = new StringBuilder();
-
-        builder
-                .append("Amount")
-                .append(separator)
-                .append("Category")
-                .append(separator)
-                .append("Income Date")
-                .append(separator)
-                .append("Description")
-                .append("\n");
+        StringBuilder builder = new StringBuilder("Amount" + separator + "Category" + separator + "Income Date" + separator + "Description");
 
         dtos.forEach(asset -> {
+            builder.append("\n");
             builder.append(asset.getAmount());
             builder.append(separator);
             builder.append(asset.getCategory());
@@ -29,7 +20,6 @@ class AssetDownloadBuilder {
             builder.append(asset.getIncomeDate());
             builder.append(separator);
             builder.append(asset.getDescription());
-            builder.append("\n");
         });
 
         return builder;
