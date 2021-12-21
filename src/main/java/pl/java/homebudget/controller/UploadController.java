@@ -15,8 +15,13 @@ public class UploadController {
 
     private final UploadService uploadService;
 
-    @PostMapping
-    private void uploadFile(@RequestParam("file") MultipartFile file) {
-        uploadService.uploadFile(file);
+    @PostMapping("/assets")
+    private void uploadAssetFile(@RequestParam("file") MultipartFile file) {
+        uploadService.uploadFile(file, "ASSET");
+    }
+
+    @PostMapping("/expenses")
+    private void uploadExpenseFile(@RequestParam("file") MultipartFile file) {
+        uploadService.uploadFile(file, "EXPENSE");
     }
 }

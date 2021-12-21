@@ -3,13 +3,15 @@ package pl.java.homebudget.service.uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 import pl.java.homebudget.dto.AssetDto;
+import pl.java.homebudget.dto.ExpenseDto;
 import pl.java.homebudget.enums.AssetCategory;
+import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.service.AssetService;
+import pl.java.homebudget.service.ExpenseService;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,18 +29,22 @@ class UploadServiceTest {
 
     @Mock
     private AssetService assetService;
+    @Mock
+    private ExpenseService expenseService;
+
+    private final AssetParserService assetParserService = new AssetParserService();
+    private final ExpenseParserService expenseParserService = new ExpenseParserService();
 
     private UploadService uploadService;
 
-    private AssetParserService assetParserService = new AssetParserService();
 
     @BeforeEach
     void setUp() {
-        uploadService = new UploadService(assetService, assetParserService);
+        uploadService = new UploadService(assetService, expenseService, assetParserService, expenseParserService);
     }
 
     @Test
-    void shouldUploadDataFromCsvFile() throws IOException {
+    void shouldUploadAssetDataFromCsvFile() throws IOException {
         //given
         MultipartFile mock = mock(MultipartFile.class);
         String csvData = """
@@ -59,10 +65,38 @@ class UploadServiceTest {
         given(mock.getInputStream()).willReturn(byteArrayInputStream);
 
         //when
-        uploadService.uploadFile(mock);
+        uploadService.uploadFile(mock, "ASSET");
 
         //then
         then(assetService).should().addAllAssets(assetDtos);
 
+    }
+
+    @Test
+    void shouldUploadExpenseDataFromCsvFile() throws IOException {
+        //given
+        MultipartFile mock = mock(MultipartFile.class);
+        String csvData = """
+                Amount;Category;Purchase Date;Description
+                666.00;OTHER;2021-10-14;opis123
+                """;
+
+        byte[] bytes = csvData.getBytes(StandardCharsets.UTF_8);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+
+        List<ExpenseDto> expenseDtos = List.of(ExpenseDto.builder()
+                .amount(new BigDecimal("666.00"))
+                .category(ExpensesCategory.OTHER)
+                .purchaseDate(Instant.parse("2021-10-14T00:00:00.000Z"))
+                .description("opis123")
+                .build());
+
+        given(mock.getInputStream()).willReturn(byteArrayInputStream);
+
+        //when
+        uploadService.uploadFile(mock, "EXPENSE");
+
+        //then
+        then(expenseService).should().saveAllExpenses(expenseDtos);
     }
 }

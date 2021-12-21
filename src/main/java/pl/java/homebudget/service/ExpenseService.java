@@ -11,6 +11,8 @@ public interface ExpenseService {
 
     ExpenseDto addExpense(ExpenseDto expenseDto);
 
+    List<ExpenseDto> saveAllExpenses(List<ExpenseDto> expenseDtos);
+
     void deleteExpense(ExpenseDto expenseDto);
 
     List<ExpenseDto> getExpensesByCategory(ExpensesCategory expensesCategory);

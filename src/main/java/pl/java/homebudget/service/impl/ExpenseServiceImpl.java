@@ -60,6 +60,16 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
+    public List<ExpenseDto> saveAllExpenses(List<ExpenseDto> expenseDtos) {
+        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        List<Expense> expenses = expenseMapper.fromDtoListToExpenseList(expenseDtos, loggedAppUser);
+
+        List<Expense> savedExpenses = expenseRepository.saveAll(expenses);
+
+        return expenseMapper.fromExpenseListToExpenseDtoList(savedExpenses);
+    }
+
+    @Override
     public List<ExpenseDto> getExpensesByCategory(ExpensesCategory expensesCategory) {
         log.info("getExpensesByCategory");
         log.debug("expensesCategory: {}", expensesCategory);
