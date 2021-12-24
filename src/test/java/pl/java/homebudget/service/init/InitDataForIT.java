@@ -40,6 +40,9 @@ public abstract class InitDataForIT {
     @Autowired
     protected AppUserService appUserService;
 
+    @Autowired
+    protected ExpenseEstimatePercentageRepository expenseEstimatePercentageRepository;
+
     protected final static String USERNAME = "user";
     protected final static String PASSWORD = "password";
 
@@ -97,6 +100,15 @@ public abstract class InitDataForIT {
         expenseRepository.save(expense);
     }
 
+    protected void initDatabaseWithExpenseEstimateAndUser(AppUser appUser) {
+        ExpenseEstimatePercentage expenseEstimatePercentage = new ExpenseEstimatePercentage(appUser, new BigDecimal("25.00"), ExpensesCategory.FUN);
+        expenseEstimatePercentageRepository.save(expenseEstimatePercentage);
+    }
+
+    protected ExpenseEstimatePercentage initDatabaseWithExpenseEstimateAndUser(AppUser appUser, ExpenseEstimatePercentage expenseEstimatePercentage) {
+        return expenseEstimatePercentageRepository.save(expenseEstimatePercentage);
+    }
+
     protected Room initDatabaseWithRoomAndUser(AppUser appUser) {
         Room room = new Room(appUser, RoomSize.ROOM_XXL, BigDecimal.TEN);
         roomRepository.save(room);
@@ -116,7 +128,7 @@ public abstract class InitDataForIT {
     }
 
     protected void initDatabaseWithPropertyAndUser(AppUser appUser, Boolean sold) {
-        Property property = new Property(appUser, new ArrayList<>(),true, "szczecin", "11-111", "nowa", "15",  sold);
+        Property property = new Property(appUser, new ArrayList<>(), true, "szczecin", "11-111", "nowa", "15", sold);
         propertyRepository.save(property);
     }
 

@@ -17,7 +17,7 @@ public class ExpenseAuditorService {
     private final ExpenseService expenseService;
     private final AssetService assetService;
 
-    public BigDecimal getAudit(Map<String, String > filters) {
+    public BigDecimal getAudit(Map<String, String> filters) {
         BigDecimal assetAmount = assetService.getFilteredAssets(filters)
                 .stream()
                 .map(AssetDto::getAmount)

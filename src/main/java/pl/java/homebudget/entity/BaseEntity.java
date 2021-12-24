@@ -1,6 +1,7 @@
 package pl.java.homebudget.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@SuperBuilder
 abstract class BaseEntity {
     @Id
     @GeneratedValue
