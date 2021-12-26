@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.java.homebudget.dto.AuthenticationRequest;
 import pl.java.homebudget.exception.AppUserInvalidUsernameOrPasswordException;
-import pl.java.homebudget.service.impl.AppUserService;
+import pl.java.homebudget.service.impl.user.AppUserService;
 import pl.java.homebudget.service.impl.AuthenticationService;
 import pl.java.homebudget.service.impl.JwtService;
 

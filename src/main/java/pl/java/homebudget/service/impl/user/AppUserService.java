@@ -1,4 +1,4 @@
-package pl.java.homebudget.service.impl;
+package pl.java.homebudget.service.impl.user;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AuthenticationRequest;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.exception.UsernameAlreadyExistsException;
 import pl.java.homebudget.mapper.AppUserMapper;
@@ -17,6 +16,7 @@ import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.repository.PropertyRepository;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.util.ArrayList;
 
@@ -30,7 +30,7 @@ public class AppUserService implements UserDetailsService {
     private final AssetRepository assetRepository;
     private final ExpenseRepository expenseRepository;
     private final PropertyRepository propertyRepository;
-    private final UserLoggedInfo userLoggedInfo;
+    private final UserLoggedInfoService userLoggedInfoService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -68,7 +68,7 @@ public class AppUserService implements UserDetailsService {
 
     @Transactional
     public void deleteUserAndAllHisData() {
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         assetRepository.deleteAllByAppUser(loggedAppUser);
         expenseRepository.deleteAllByAppUser(loggedAppUser);

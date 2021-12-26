@@ -10,7 +10,7 @@ import pl.java.homebudget.enums.AssetCategory;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.enums.RoomSize;
 import pl.java.homebudget.repository.*;
-import pl.java.homebudget.service.impl.AppUserService;
+import pl.java.homebudget.service.impl.user.AppUserService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -98,11 +98,6 @@ public abstract class InitDataForIT {
         final String instantFromDateSuffix = "T00:00:00.000Z";
         Expense expense = new Expense(BigDecimal.ZERO, Instant.parse(date + instantFromDateSuffix), ExpensesCategory.OTHER, appUser);
         expenseRepository.save(expense);
-    }
-
-    protected void initDatabaseWithExpenseEstimateAndUser(AppUser appUser) {
-        ExpenseEstimatePercentage expenseEstimatePercentage = new ExpenseEstimatePercentage(appUser, new BigDecimal("25.00"), ExpensesCategory.FUN);
-        expenseEstimatePercentageRepository.save(expenseEstimatePercentage);
     }
 
     protected ExpenseEstimatePercentage initDatabaseWithExpenseEstimateAndUser(AppUser appUser, ExpenseEstimatePercentage expenseEstimatePercentage) {

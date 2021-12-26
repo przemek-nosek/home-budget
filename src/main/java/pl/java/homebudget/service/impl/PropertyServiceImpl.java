@@ -6,7 +6,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.PropertyDto;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Property;
 import pl.java.homebudget.entity.Room;
@@ -16,6 +15,7 @@ import pl.java.homebudget.mapper.RoomMapper;
 import pl.java.homebudget.repository.PropertyRepository;
 import pl.java.homebudget.repository.RoomRepository;
 import pl.java.homebudget.service.PropertyService;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final PropertyMapper propertyMapper = Mappers.getMapper(PropertyMapper.class);
-    private final UserLoggedInfo userLoggedInfo;
+    private final UserLoggedInfoService userLoggedInfoService;
     private final RoomMapper roomMapper;
     private final RoomRepository roomRepository;
 
@@ -36,7 +36,7 @@ public class PropertyServiceImpl implements PropertyService {
     public List<PropertyDto> getAllProperties(boolean sold) {
         log.info("getUnsoldProperties");
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         return propertyRepository.findAllByAppUserAndSold(loggedAppUser, sold).stream()
                 .map(propertyMapper::fromPropertyToDto)
@@ -49,7 +49,7 @@ public class PropertyServiceImpl implements PropertyService {
         log.info("addProperty");
         log.debug("propertyDto {}", propertyDto);
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         Property property = propertyMapper.fromDtoToProperty(propertyDto, loggedAppUser);
         property.getRooms().forEach(room -> room.setAppUser(loggedAppUser));
@@ -67,7 +67,7 @@ public class PropertyServiceImpl implements PropertyService {
         log.info("updateProperty");
         log.info("propertyDto {}", propertyDto);
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         Long id = propertyDto.getId();
         Property property = propertyRepository.findByIdAndAppUser(id, loggedAppUser)
@@ -95,7 +95,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Transactional
     public void setSoldProperty(Long id) {
         log.info("setSoldProperty");
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         Property property = propertyRepository.findByIdAndAppUser(id, loggedAppUser)
                 .orElseThrow(() -> new PropertyNotFoundException(String.format("Property with given id: %d not found", id)));

@@ -2,20 +2,17 @@ package pl.java.homebudget.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.mapping.Collection;
 import org.springframework.stereotype.Service;
-import pl.java.homebudget.dto.UserLoggedInfo;
+import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.ExpenseEstimatePercentage;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.mapper.ExpenseEstimatePercentageMapper;
 import pl.java.homebudget.repository.ExpenseEstimatePercentageRepository;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,15 +21,15 @@ import java.util.stream.Collectors;
 public class ExpenseEstimatePercentageService {
 
     private final ExpenseEstimatePercentageRepository expenseEstimatePercentageRepository;
-    private final UserLoggedInfo userLoggedInfo;
+    private final UserLoggedInfoService userLoggedInfoService;
     private final ExpenseEstimatePercentageMapper expenseEstimatePercentageMapper;
 
-
+    @Transactional
     public Map<ExpensesCategory, BigDecimal> addEstimation(Map<ExpensesCategory, BigDecimal> categoryBigDecimalMap) {
         log.info("addEstimation");
         log.debug("categoryBigDecimalMap: {}", categoryBigDecimalMap);
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
         List<ExpenseEstimatePercentage> expenseEstimatePercentages = expenseEstimatePercentageMapper.fromMapToEntity(categoryBigDecimalMap, loggedAppUser);
 
         List<ExpenseEstimatePercentage> savedEstimates = expenseEstimatePercentageRepository.saveAll(expenseEstimatePercentages);
@@ -44,15 +41,29 @@ public class ExpenseEstimatePercentageService {
     public Map<ExpensesCategory, BigDecimal> getEstimations() {
         log.info("getEstimations");
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
-        Optional<List<ExpenseEstimatePercentage>> estimations = expenseEstimatePercentageRepository.findAllByAppUser(loggedAppUser);
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
-        if (estimations.isPresent()) {
-            List<ExpenseEstimatePercentage> expenseEstimatePercentages = estimations.get();
-            return expenseEstimatePercentages.stream()
+        return getEstimations(loggedAppUser);
+    }
+
+    public Map<ExpensesCategory, BigDecimal> getEstimations(AppUser appUser) {
+        log.info("getEstimations");
+
+        List<ExpenseEstimatePercentage> estimations = expenseEstimatePercentageRepository.findAllByAppUser(appUser);
+
+        if (estimations.size() != 0) {
+            return estimations.stream()
                     .collect(Collectors.toMap(ExpenseEstimatePercentage::getExpensesCategory, ExpenseEstimatePercentage::getPercentage));
         }
 
-        return Collections.emptyMap();
+        return mapWithZeroValues();
+    }
+
+    private Map<ExpensesCategory, BigDecimal> mapWithZeroValues() {
+        return Arrays.stream(ExpensesCategory.values())
+                .collect(Collectors.toMap(
+                        expensesCategory -> expensesCategory,
+                        expensesCategory -> BigDecimal.ZERO
+                ));
     }
 }

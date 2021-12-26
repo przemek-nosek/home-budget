@@ -6,7 +6,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AssetDto;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
 import pl.java.homebudget.enums.AssetCategory;
@@ -15,12 +14,12 @@ import pl.java.homebudget.filter.FilterRange;
 import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.AssetService;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -31,14 +30,14 @@ public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
     private final AssetMapper assetMapper = Mappers.getMapper(AssetMapper.class);
-    private final UserLoggedInfo userLoggedInfo;
+    private final UserLoggedInfoService userLoggedInfoService;
     private final FilterRange<Asset> assetFilterRange;
 
     @Override
     public List<AssetDto> getAssets() {
         log.info("Get all Assets");
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         return assetRepository.findAllByAppUser(loggedAppUser).stream()
                 .map(assetMapper::fromAssetToDto)
@@ -50,7 +49,7 @@ public class AssetServiceImpl implements AssetService {
         log.info("Add asset");
         log.debug("AssetDto details: {}", assetDto);
 
-        AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedUser = userLoggedInfoService.getLoggedAppUser();
         Asset asset = assetMapper.fromDtoToAsset(assetDto, loggedUser);
 
         Asset savedAsset = assetRepository.save(asset);
@@ -64,7 +63,7 @@ public class AssetServiceImpl implements AssetService {
         log.info("addAllAssets");
         log.debug("assetDtos {}", assetDtos);
 
-        AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedUser = userLoggedInfoService.getLoggedAppUser();
 
         List<Asset> assets = new ArrayList<>();
 
@@ -87,7 +86,7 @@ public class AssetServiceImpl implements AssetService {
         log.debug("AssetDto details: {}", assetDto);
 
         Long id = assetDto.getId();
-        AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedUser = userLoggedInfoService.getLoggedAppUser();
 
         boolean existsById = assetRepository.existsByIdAndAppUser(id, loggedUser);
         if (!existsById) {
@@ -107,7 +106,7 @@ public class AssetServiceImpl implements AssetService {
         log.debug("AssetDto details {} ", assetDto);
         Long id = assetDto.getId();
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         Asset assetToUpdate = assetRepository.findByIdAndAppUser(id, loggedAppUser)
                 .orElseThrow(() -> new AssetNotFoundException(String.format("Asset with given id %d not found", id)));
@@ -129,7 +128,7 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public List<AssetDto> getAssetsByCategory(AssetCategory assetCategory) {
         log.info("Getting Assets by category {}", assetCategory);
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         return assetRepository.findAllByCategoryAndAppUser(assetCategory, loggedAppUser)
                 .stream()
@@ -140,7 +139,7 @@ public class AssetServiceImpl implements AssetService {
     @Override
     @Transactional
     public void deleteAssetsByAppUser() {
-        AppUser loggedUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedUser = userLoggedInfoService.getLoggedAppUser();
 
         log.info("deleteAssetsByAppUser");
 
@@ -152,13 +151,19 @@ public class AssetServiceImpl implements AssetService {
         log.info("getFilteredExpenses");
         log.debug("filters {}", filters);
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
-        return assetFilterRange.getAllByFilter(loggedAppUser, filters)
+        return  getFilteredAssets(loggedAppUser, filters);
+    }
+
+    @Override
+    public List<AssetDto> getFilteredAssets(AppUser appUser, Map<String, String> filters) {
+        log.info("getFilteredExpenses");
+        log.debug("filters {}", filters);
+
+        return assetFilterRange.getAllByFilter(appUser, filters)
                 .stream()
                 .map(assetMapper::fromAssetToDto)
                 .collect(toList());
     }
-
-
 }

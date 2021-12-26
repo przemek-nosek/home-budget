@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @MappedSuperclass
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString

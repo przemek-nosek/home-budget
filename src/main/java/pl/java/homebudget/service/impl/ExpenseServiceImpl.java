@@ -6,7 +6,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.ExpenseDto;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.ExpensesCategory;
@@ -15,6 +14,7 @@ import pl.java.homebudget.filter.FilterRange;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.ExpenseService;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class ExpenseServiceImpl implements ExpenseService {
 
     private final ExpenseRepository expenseRepository;
-    private final UserLoggedInfo userLoggedInfo;
+    private final UserLoggedInfoService userLoggedInfoService;
     private final ExpenseMapper expenseMapper = Mappers.getMapper(ExpenseMapper.class);
     private final FilterRange<Expense> expenseFilterRange;
 
@@ -35,7 +35,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public List<ExpenseDto> getExpenses() {
         log.info("getAssets");
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         return expenseRepository.findAllByAppUser(loggedAppUser)
                 .stream()
@@ -48,7 +48,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         log.info("addAsset");
         log.debug("expenseDto: {}", expenseDto);
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         Expense expense = expenseMapper.fromDtoToExpense(expenseDto, loggedAppUser);
 
@@ -61,7 +61,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public List<ExpenseDto> saveAllExpenses(List<ExpenseDto> expenseDtos) {
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
         List<Expense> expenses = expenseMapper.fromDtoListToExpenseList(expenseDtos, loggedAppUser);
 
         List<Expense> savedExpenses = expenseRepository.saveAll(expenses);
@@ -74,7 +74,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         log.info("getExpensesByCategory");
         log.debug("expensesCategory: {}", expensesCategory);
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         return expenseRepository.findAllByCategoryAndAppUser(expensesCategory, loggedAppUser)
                 .stream()
@@ -89,7 +89,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         log.debug("expenseDto {}", expenseDto);
 
         Long id = expenseDto.getId();
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         boolean existsById = expenseRepository.existsByIdAndAppUser(id, loggedAppUser);
 
@@ -107,7 +107,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public void deleteExpensesByAppUser() {
         log.info("deleteExpensesByAppUser");
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         expenseRepository.deleteAllByAppUser(loggedAppUser);
     }
@@ -118,7 +118,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         log.info("updateExpense");
         log.debug("expenseDto: {}", expenseDto);
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         Long expenseDtoId = expenseDto.getId();
         Expense expense = expenseRepository.findByIdAndAppUser(expenseDtoId, loggedAppUser)
@@ -141,7 +141,17 @@ public class ExpenseServiceImpl implements ExpenseService {
         log.info("getFilteredExpenses");
         log.debug("filters {}", filters);
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
+
+        return getFilteredExpenses(loggedAppUser, filters);
+    }
+
+    @Override
+    public List<ExpenseDto> getFilteredExpenses(AppUser appUser, Map<String, String> filters) {
+        log.info("getFilteredExpenses");
+        log.debug("filters {}", filters);
+
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         return expenseFilterRange.getAllByFilter(loggedAppUser, filters)
                 .stream()

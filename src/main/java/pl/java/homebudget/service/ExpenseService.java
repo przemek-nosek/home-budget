@@ -1,6 +1,7 @@
 package pl.java.homebudget.service;
 
 import pl.java.homebudget.dto.ExpenseDto;
+import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.enums.ExpensesCategory;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface ExpenseService {
     ExpenseDto updateExpense(ExpenseDto expenseDto);
 
     List<ExpenseDto> getFilteredExpenses(Map<String, String> filters);
+
+    List<ExpenseDto> getFilteredExpenses(AppUser appUser, Map<String, String> filters);
 }

@@ -8,6 +8,7 @@ import pl.java.homebudget.enums.ExpensesCategory;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ExpenseEstimatePercentageMapper {
@@ -18,7 +19,8 @@ public interface ExpenseEstimatePercentageMapper {
                 .map(e -> ExpenseEstimatePercentage.builder()
                         .expensesCategory(e.getKey())
                         .percentage(e.getValue())
+                        .appUser(appUser)
                         .build())
-                .toList();
+                .collect(Collectors.toList());
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.java.homebudget.dto.AuthenticationRequest;
 import pl.java.homebudget.dto.AuthenticationResponse;
-import pl.java.homebudget.service.impl.AppUserService;
+import pl.java.homebudget.service.impl.user.AppUserService;
 import pl.java.homebudget.service.impl.AuthenticationService;
 
 import javax.validation.Valid;

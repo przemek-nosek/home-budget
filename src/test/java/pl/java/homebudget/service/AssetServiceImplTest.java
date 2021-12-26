@@ -10,19 +10,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.java.homebudget.dto.AssetDto;
-import pl.java.homebudget.dto.ExpenseDto;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Asset;
-import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.AssetCategory;
-import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
 import pl.java.homebudget.exception.MissingExpenseFilterSettingException;
 import pl.java.homebudget.filter.FilterRange;
 import pl.java.homebudget.mapper.AssetMapper;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.service.impl.AssetServiceImpl;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -47,7 +44,7 @@ class AssetServiceImplTest {
     @Mock
     private AssetRepository assetRepository;
     @Mock
-    private UserLoggedInfo userLoggedInfo;
+    private UserLoggedInfoService userLoggedInfoService;
 
     @InjectMocks
     private AssetServiceImpl assetService;
@@ -67,7 +64,7 @@ class AssetServiceImplTest {
         assets.add(new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.BONUS, appUser));
 
         given(assetRepository.findAllByAppUser(any())).willReturn(assets);
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
 
         //when
         List<AssetDto> assetDtoList = assetService.getAssets();
@@ -78,7 +75,7 @@ class AssetServiceImplTest {
                 .collect(Collectors.toList());
 
         then(assetRepository).should().findAllByAppUser(any());
-        then(userLoggedInfo).should().getLoggedAppUser();
+        then(userLoggedInfoService).should().getLoggedAppUser();
         assertThat(assetDtoList).hasSize(3);
         assertThat(assetDtoList).containsExactlyElementsOf(assetDtos);
     }
@@ -91,7 +88,7 @@ class AssetServiceImplTest {
         AssetDto assetDto = new AssetDto(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER);
 
         given(assetRepository.save(asset)).willReturn(asset);
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
 
         //when
         AssetDto savedAsset = assetService.addAsset(assetDto);
@@ -133,7 +130,7 @@ class AssetServiceImplTest {
         Asset asset = new Asset(BigDecimal.ZERO, Instant.now(), AssetCategory.OTHER, appUser);
 //        asset.setId(1L);
 
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
         given(assetRepository.findByIdAndAppUser(assetDto.getId(), appUser)).willReturn(Optional.of(asset));
 
         //when
@@ -171,7 +168,7 @@ class AssetServiceImplTest {
                         new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.OTHER, appUser)
                 )
         );
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
 
         //when
         List<AssetDto> assetsByCategory = assetService.getAssetsByCategory(assetCategory);
@@ -193,7 +190,7 @@ class AssetServiceImplTest {
                 new Asset(BigDecimal.ONE, Instant.now(), AssetCategory.LOAN_RETURNED, appUser),
                 new Asset(BigDecimal.TEN, Instant.now(), AssetCategory.SALARY, appUser)
         );
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
         given(assetFilterRange.getAllByFilter(appUser, filters)).willReturn(assetList);
 
         //when
@@ -210,7 +207,7 @@ class AssetServiceImplTest {
     void shouldNotGetFilteredAssets_andThrowMissingExpenseFilterSettingException(String existingFilter, String missingFilter, Map<String, String> filters) {
         //given
         AppUser appUser = getAppUser();
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
         doThrow(new MissingExpenseFilterSettingException("Missing filter setting: " + missingFilter)).when(assetFilterRange).getAllByFilter(appUser, filters);
 
         //when

@@ -1,4 +1,4 @@
-package pl.java.homebudget.dto;
+package pl.java.homebudget.service.impl.user;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import pl.java.homebudget.repository.AppUserRepository;
 @Component
 @AllArgsConstructor
 @Slf4j
-public class UserLoggedInfo {
+public class UserLoggedInfoService {
 
     private final AppUserRepository appUserRepository;
 

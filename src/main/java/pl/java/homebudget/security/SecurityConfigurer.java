@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.java.homebudget.filter.JwtRequestFilter;
-import pl.java.homebudget.service.impl.AppUserService;
+import pl.java.homebudget.service.impl.user.AppUserService;
 
 @EnableWebSecurity
 @Configuration

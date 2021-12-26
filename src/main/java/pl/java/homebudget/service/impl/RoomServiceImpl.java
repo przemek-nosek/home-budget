@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.RoomDto;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Room;
 import pl.java.homebudget.enums.RoomSize;
@@ -13,6 +12,7 @@ import pl.java.homebudget.exception.RoomNotFoundException;
 import pl.java.homebudget.mapper.RoomMapper;
 import pl.java.homebudget.repository.RoomRepository;
 import pl.java.homebudget.service.RoomService;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -26,13 +26,13 @@ public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
     private final RoomMapper roomMapper;
-    private final UserLoggedInfo userLoggedInfo;
+    private final UserLoggedInfoService userLoggedInfoService;
 
     @Override
     public List<RoomDto> getRooms() {
         log.info("getRooms");
 
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         List<Room> roomList = roomRepository.findAllByAppUser(loggedAppUser);
 
@@ -52,7 +52,7 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     public RoomDto makeRoomInactive(Long id) {
         log.info("makeRoomInactive");
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         Room room = roomRepository.findByIdAndAppUser(id, loggedAppUser)
                 .orElseThrow(() -> new RoomNotFoundException(String.format("Room with given id %d not found", id)));
@@ -66,7 +66,7 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     public RoomDto saveOrUpdateRoom(RoomDto roomDto) {
         log.info("saveOrUpdateRoom");
-        AppUser loggedAppUser = userLoggedInfo.getLoggedAppUser();
+        AppUser loggedAppUser = userLoggedInfoService.getLoggedAppUser();
 
         return Objects.isNull(roomDto.getId())
                 ? saveRoom(roomDto, loggedAppUser)

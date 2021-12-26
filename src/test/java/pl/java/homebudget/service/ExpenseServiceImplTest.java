@@ -9,22 +9,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.java.homebudget.dto.ExpenseDto;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.entity.Expense;
 import pl.java.homebudget.enums.ExpensesCategory;
 import pl.java.homebudget.exception.AssetNotFoundException;
-import pl.java.homebudget.exception.ExpenseNotFoundException;
-import pl.java.homebudget.exception.InvalidDateFormatException;
 import pl.java.homebudget.exception.MissingExpenseFilterSettingException;
 import pl.java.homebudget.filter.FilterRange;
 import pl.java.homebudget.mapper.ExpenseMapper;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.service.impl.ExpenseServiceImpl;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +42,7 @@ class ExpenseServiceImplTest {
     private ExpenseRepository expenseRepository;
 
     @Mock
-    private UserLoggedInfo userLoggedInfo;
+    private UserLoggedInfoService userLoggedInfoService;
 
     @InjectMocks
     private ExpenseServiceImpl expenseService;
@@ -66,7 +63,7 @@ class ExpenseServiceImplTest {
                 new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser)
         );
 
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(any());
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(any());
         given(expenseRepository.findAllByAppUser(appUser)).willReturn(expenseList);
 
         //when
@@ -74,7 +71,7 @@ class ExpenseServiceImplTest {
 
         //then
         assertThat(expenses).hasSize(expenseList.size());
-        then(userLoggedInfo).should().getLoggedAppUser();
+        then(userLoggedInfoService).should().getLoggedAppUser();
         then(expenseRepository).should().findAllByAppUser(any());
 
     }
@@ -109,7 +106,7 @@ class ExpenseServiceImplTest {
                 new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.OTHER, appUser)
         );
 
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
         given(expenseRepository.findAllByCategoryAndAppUser(expensesCategory, appUser)).willReturn(expenseList);
 
         //when
@@ -152,7 +149,7 @@ class ExpenseServiceImplTest {
         Expense expense = new Expense(BigDecimal.ZERO, Instant.now(), ExpensesCategory.OTHER, appUser);
 //        asset.setId(1L);
 
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
         given(expenseRepository.findByIdAndAppUser(expenseDto.getId(), appUser)).willReturn(Optional.of(expense));
 
         //when
@@ -189,7 +186,7 @@ class ExpenseServiceImplTest {
                 new Expense(BigDecimal.ONE, Instant.now(), ExpensesCategory.EDUCATION, appUser),
                 new Expense(BigDecimal.TEN, Instant.now(), ExpensesCategory.FUN, appUser)
         );
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
         given(expenseFilterRange.getAllByFilter(appUser, filters)).willReturn(expenseList);
 
         //when
@@ -206,7 +203,7 @@ class ExpenseServiceImplTest {
     void shouldNotGetFilteredExpenses_andThrowMissingExpenseFilterSettingException(String existingFilter, String missingFilter, Map<String, String> filters) {
         //given
         AppUser appUser = getAppUser();
-        given(userLoggedInfo.getLoggedAppUser()).willReturn(appUser);
+        given(userLoggedInfoService.getLoggedAppUser()).willReturn(appUser);
         doThrow(new MissingExpenseFilterSettingException("Missing filter setting: " + missingFilter)).when(expenseFilterRange).getAllByFilter(appUser, filters);
 
         //when

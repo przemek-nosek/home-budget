@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import pl.java.homebudget.dto.AuthenticationRequest;
-import pl.java.homebudget.dto.UserLoggedInfo;
 import pl.java.homebudget.entity.AppUser;
 import pl.java.homebudget.exception.UsernameAlreadyExistsException;
 import pl.java.homebudget.mapper.AppUserMapper;
@@ -16,7 +15,8 @@ import pl.java.homebudget.repository.AppUserRepository;
 import pl.java.homebudget.repository.AssetRepository;
 import pl.java.homebudget.repository.ExpenseRepository;
 import pl.java.homebudget.repository.PropertyRepository;
-import pl.java.homebudget.service.impl.AppUserService;
+import pl.java.homebudget.service.impl.user.AppUserService;
+import pl.java.homebudget.service.impl.user.UserLoggedInfoService;
 
 import java.util.Optional;
 
@@ -46,7 +46,7 @@ class AppUserServiceTest {
     private AppUserMapper appUserMapper;
 
     @Mock
-    private UserLoggedInfo userLoggedInfo;
+    private UserLoggedInfoService userLoggedInfoService;
 
     @InjectMocks
     private AppUserService appUserService;

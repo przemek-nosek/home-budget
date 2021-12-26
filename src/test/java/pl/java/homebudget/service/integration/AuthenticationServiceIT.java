@@ -7,7 +7,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import pl.java.homebudget.dto.AuthenticationRequest;
 import pl.java.homebudget.exception.AppUserInvalidUsernameOrPasswordException;
-import pl.java.homebudget.service.impl.AppUserService;
 import pl.java.homebudget.service.impl.AuthenticationService;
 import pl.java.homebudget.service.init.InitDataForIT;
 

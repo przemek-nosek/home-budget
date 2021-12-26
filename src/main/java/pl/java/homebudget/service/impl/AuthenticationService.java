@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import pl.java.homebudget.dto.AuthenticationRequest;
 import pl.java.homebudget.exception.AppUserInvalidUsernameOrPasswordException;
+import pl.java.homebudget.service.impl.user.AppUserService;
 
 @Service
 @AllArgsConstructor
